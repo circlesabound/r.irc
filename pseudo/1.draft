@@ -1,0 +1,30 @@
+BEGIN SUBMODULE setNick
+	GET $nick
+END SUBMODULE
+
+BEGIN SUBMODULE setServer
+	GET $server
+END SUBMODULE
+
+BEGIN SUBMODULE setChannel
+	GET $channel
+END SUBMODULE
+
+BEGIN main
+	setNick
+	setServer
+	setChannel
+	DO
+		GET input
+		IF input begins with /
+			SELECT input
+				/quit: quit=1
+				/nick: setNick
+				/server: setServer
+				/channel: setChannel
+				# more commands
+			ELSE print "Invalid command"
+		ELSE
+			sendMessage
+	UNTIL quit=1
+END
