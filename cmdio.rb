@@ -37,13 +37,13 @@ end
 threads << Thread.new do
 	loop {
 		input = gets.chomp
-		if input==("/quit"||"/exit"||"/bye")
-			break
+		if input=="/quit"||input=="/exit"||input=="/bye"
+			s.close
+			threads.each {|thr| thr.kill}
 		else
 			s.puts "PRIVMSG #{channel} #{input}"
 		end
 	}
-	threads.each {|thr| thr.kill}
 end
 
 threads.each {|thr| thr.join}
