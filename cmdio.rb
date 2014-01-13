@@ -37,11 +37,18 @@ end
 threads << Thread.new do
 	loop {
 		input = gets.chomp
-		if input=="/quit"||input=="/exit"||input=="/bye"
-			s.close
-			threads.each {|thr| thr.kill}
+		# if input=="/quit"||input=="/exit"||input=="/bye"
+		# 	s.close
+		# 	threads.each {|thr| thr.kill}
+		# else
+		# 	puts input[0]
+		# 	s.puts "PRIVMSG #{channel} :#{input}"
+		# end
+		if input[0]=="/"
+			command=input[1..input.length]
+			s.puts command
 		else
-			s.puts "PRIVMSG #{channel} #{input}"
+			s.puts "PRIVMSG #{channel} :#{input}"
 		end
 	}
 end
