@@ -44,9 +44,11 @@ threads << Thread.new do
 		# 	puts input[0]
 		# 	s.puts "PRIVMSG #{channel} :#{input}"
 		# end
-		if input[0]=="/"
-			command=input[1..input.length]
-			s.puts command
+		if input[0]=="/" && input[1]=="/"
+			unless input[1]=="/"
+				command=input[1..input.length]
+				s.puts command
+			end
 		else
 			s.puts "PRIVMSG #{channel} :#{input}"
 		end
