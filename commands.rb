@@ -48,3 +48,15 @@ def c_knock(channel,message,caller)
 	# Sends a NOTICE to an invitation-only <channel> with an optional <message>, requesting an invite.
 end
 
+def c_list(channels,server,caller)
+	# Lists all channels on the server. If the comma-separated list <channels> is given, it will return the channel topics. If <server> is given, the command will be forwarded to <server> for evaluation.
+end
+
+def c_nick(nick,caller)
+	# Allows a client to change their IRC nickname.
+end
+
+def c_notice(msgtarget,message,caller)
+	# This command works similarly to PRIVMSG, except automatic replies must never be sent in reply to NOTICE messages.
+end
+
