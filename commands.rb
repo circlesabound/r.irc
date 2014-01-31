@@ -44,6 +44,7 @@ def c_kill(client,comment,caller)
 	# Forcibly removes <client> from the network.
 end
 
-def method_name
-	
+def c_knock(channel,message,caller)
+	# Sends a NOTICE to an invitation-only <channel> with an optional <message>, requesting an invite.
 end
+
