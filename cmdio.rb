@@ -1,6 +1,5 @@
 require 'socket'
-require 'observer'
-require 'rubygems'
+include 'commands.rb'
 
 puts "r.irc v0.1a"
 print "Enter server location: "
@@ -37,18 +36,10 @@ end
 threads << Thread.new do
 	loop {
 		input = gets.chomp
-		# if input=="/quit"||input=="/exit"||input=="/bye"
-		# 	s.close
-		# 	threads.each {|thr| thr.kill}
-		# else
-		# 	puts input[0]
-		# 	s.puts "PRIVMSG #{channel} :#{input}"
-		# end
-		if input[0]=="/" && input[1]=="/"
-			unless input[1]=="/"
-				command=input[1..input.length]
-				s.puts command
-			end
+		if input[0]=="/" && input[1]!="/"
+			command=input[1..input.length]
+			# commands !
+			s.puts command
 		else
 			s.puts "PRIVMSG #{channel} :#{input}"
 		end
