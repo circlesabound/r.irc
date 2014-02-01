@@ -60,3 +60,15 @@ def c_notice(msgtarget,message,caller)
 	# This command works similarly to PRIVMSG, except automatic replies must never be sent in reply to NOTICE messages.
 end
 
+def c_part(channels,message,caller)
+	# Causes a user to leave the channels in the comma-separated list <channels>.
+end
+
+def c_privmsg(msgtarget,message,caller)
+	# Sends <message> to <msgtarget>, which is usually a user or channel.
+end
+
+def c_quit(message,caller)
+	# Disconnects the user from the server.
+end
+

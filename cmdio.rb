@@ -1,5 +1,5 @@
 require 'socket'
-include 'commands.rb'
+require_relative 'commands.rb'
 
 puts "r.irc v0.1a"
 print "Enter server location: "
@@ -28,18 +28,25 @@ channel = gets.chomp
 s.puts "JOIN #{channel}"
 
 threads = []
-threads << Thread.new do
+threads << t_read = Thread.new do
 	while incoming = s.gets
 		puts incoming
 	end
 end
-threads << Thread.new do
+threads << t_write = Thread.new do
 	loop {
 		input = gets.chomp
 		if input[0]=="/" && input[1]!="/"
 			command=input[1..input.length]
-			# commands !
-			s.puts command
+			case command
+				when "quit","bye","exit"
+					s.puts "QUIT"
+					puts "Bye"
+					threads.each {|thr| thr.kill}
+					break
+				else
+					s.puts command.upcase
+			end
 		else
 			s.puts "PRIVMSG #{channel} :#{input}"
 		end
