@@ -1,5 +1,5 @@
 require 'socket'
-require_relative 'commands.rb'
+load('commands.rb')
 
 puts "r.irc v0.1a"
 print "Enter server location: "
@@ -40,7 +40,7 @@ threads << t_write = Thread.new do
 			command=input[1..input.length]
 			case command
 				when "quit","bye","exit"
-					s.puts "QUIT"
+					c_quit(s,"testmsg",0)
 					puts "Bye"
 					threads.each {|thr| thr.kill}
 					break
