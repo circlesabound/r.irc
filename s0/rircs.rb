@@ -5,23 +5,37 @@ Shoes.app {
 	def u_input
 		@inputDisplay.clear
 		@inputArray.each { |t|
-			@inputDisplay.append{
+			@inputDisplay.append {
 				para t
 			}
 		}
 	end
 	s = TCPSocket.new "localhost","6667"
 	s.puts "USER username 0 * realname"
-	s.puts "NICK nickname"
+	s.puts "NICK rircs0"
 	s.puts "JOIN #test"
 	threads=[]
-	flow {
+	stack {
+		para "r.irc s0"
+		@inputArray=[]
+		@inputDisplay=stack
+	}
+	@inputflow = flow {
 		@input = edit_line
 		threads << t_input = Thread.new {
-			button("submit") {
-				# @inputArray << @input.text
-				@inputArray << "> " + @input.text
-				s.puts @input.text
+			@inputflow.append button("submit") {
+				if @input.text[0]=="/"
+					strippedCommand=@input.text[1..@input.text.length].upcase
+					case strippedCommand
+						when "QUIT","BYE","EXIT"
+							s.close()
+							@inputArray << "Bye"
+							threads.each {|t| t.kill}
+					end
+				else
+					@inputArray << "> " + @input.text
+					s.puts @input.text
+				end
 				u_input
 				@input.text = ""
 			}
@@ -32,10 +46,9 @@ Shoes.app {
 				u_input
 			end
 		}
-	}
-	stack {
-		para "r.irc s0"
-		@inputArray=[]
-		@inputDisplay=stack
+		# threads.each {|t| t.join}
+		if threads.length()==0
+			# close window
+		end
 	}
 }
