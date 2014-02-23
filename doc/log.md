@@ -1,16 +1,22 @@
 # 04/12
 Decided on main idea - internet messaging client, using IRC
+
 PROBLEM - Never worked with any sort of networking before. Also, I want this program to be multi-platform, so no VB.NET. 
+
 TODO - Need to determine what language to use and learn how to use networking in that language
 
 # 13/12
 Decided on language - Ruby. Discovered a RubyGem known as Ruby-IRC that provides functions to interact with network, planning to use that. Set up development environment - Ubuntu 13.10 - on both home computer and laptop. Set up Git version control, created remote repository at GitHub.
+
 PROBLEM - Ruby-IRC gem has lack of documentation. This means that I must use the process of guess-and-check in order to determine which function is appropriate.
+
 TODO - Need to find a way of implementing a GUI using Ruby. Research required.
 
 # 17/12
 Finished the entire Ruby course on codecademy.com - should be sufficient knowledge to begin practicing by myself. Disassociated the Ruby-IRC gem from this project due to later mentioned problems. Decided to directly use TCPSocket as an interface instead of any other gem. Created initial interface designs - inspiration from Mozilla Firefox and FileZilla.
+
 PROBLEM - Ruby-IRC was problematic due to extreme lack of documentation as well as the fact that it refused to install on the laptop.
+
 TODO - Still need to determine a means of implementing GUI
 
 # 23/12
