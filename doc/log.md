@@ -73,7 +73,7 @@ Getting started on official documentation for Check 1: Understanding and Definin
 
 PROBLEM - 
 
-TODO - Finished s/e issues, digitise storyboard/screen designs. CD/DFD
+TODO - Finish s/e issues, digitise storyboard/screen designs. CD/DFD
 
 # 23/02
 Finished Check 1 documentation. Merged all files and images into a single PDF and printed.
@@ -83,3 +83,11 @@ PROBLEM - MSWord is incredibly stubborn when it comes to page numbers and orient
 TODO - 
 
 
+# 13/03
+Setback - laptop development environment is gone due to hdd format + reinstall
+Shoes refuses to install on Arch Linux, therefore only have desktop development environment as compile
+no loss of data nor progress due to git + backups
+
+PROBLEM - sdd exam is tomorrow
+
+TODO - study, continue to try installing shoes
