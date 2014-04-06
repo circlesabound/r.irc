@@ -91,3 +91,25 @@ no loss of data nor progress due to git + backups
 PROBLEM - sdd exam is tomorrow
 
 TODO - study, continue to try installing shoes
+
+
+# 22/03
+No way of installing Shoes on laptop, which means compilation is only possible on desktop. Severely limits the portability of my work in exchange for a better development environment?
+Started thinking about data structures. User-defined profiles should be saved into config files and on startup read and stored in class instances. Application settings similarly.
+
+PROBLEM - All but forgotten how to use classes in Ruby. Must revise.
+- obvious problem of less portability of development
+
+TODO - Revise classes. Find out the best method to format settings + profile configuration files as to maintain ease of use and readability for manual editing
+
+
+# 02/04
+Decided on class structure for UserProfile
+- each class is a user profile
+- all user profiles are loaded into an array upon startup
+- class consists of id (autogen), nickname, realname, username (optional)
+A stored setting should dictate the default class, identified by id
+
+
+# 03/04
+Shoes installed on laptop! Just in time for camp, I can now solely develop on my laptop meaning I can do much more on camp.

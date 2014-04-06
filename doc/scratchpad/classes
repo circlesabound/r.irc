@@ -1,0 +1,16 @@
+# overview of classes
+
+class UserProfile
+	@@profileCount = 0
+	def initialize(profileName,nickname,realname,username)
+		@profileID = @@profileCount
+		@profileName = profileName
+		@nickname = nickname
+		@realname = realname
+		@username = username # can be optional
+		@@profileCount += 1
+	end
+	def count
+		return @@profileCount
+	end
+end

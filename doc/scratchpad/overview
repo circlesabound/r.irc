@@ -1,0 +1,19 @@
+overview of algorithm
+
+BEGIN _main_
+	_startUpProcedures_
+	// more //
+END _main_
+
+BEGIN _startUpProcedures_
+	settings = _readSettings_ 									// read settings config file into array
+	profile = _readProfile_(settingsArray.defaultProfile) 		// read profile config file into array
+END _startUpProcedures_
+
+BEGIN _readSettings_
+
+END _readSettings_
+
+BEGIN _readProfile_
+
+END _readProfile_
