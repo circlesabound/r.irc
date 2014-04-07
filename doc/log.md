@@ -104,12 +104,15 @@ TODO - Revise classes. Find out the best method to format settings + profile con
 
 
 # 02/04
-Decided on class structure for UserProfile
-- each class is a user profile
-- all user profiles are loaded into an array upon startup
-- class consists of id (autogen), nickname, realname, username (optional)
-A stored setting should dictate the default class, identified by id
+Decided on class structure for user profiles
+- user profiles are defined as Profile class instances
+- these are initialised on program startup
+- class consists of id (autogen on create), nickname, realname, username (optional)
+- Profile class includes methods to create, modify, delete
+A stored setting should dictate the default class, identified by id. 
 
+TODO - define what needs to go into a Settings file. Determine layout of Profile file. Develop class structure for Settings.
 
 # 03/04
 Shoes installed on laptop! Just in time for camp, I can now solely develop on my laptop meaning I can do much more on camp.
+
