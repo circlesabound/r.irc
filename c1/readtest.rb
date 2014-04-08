@@ -1,5 +1,5 @@
-load('classes.rb')
 load('methods_io.rb')
+load('classes.rb')
 
 profilesFile = File.new('profilesFile')
 settingsFile = File.new('settingsFile')

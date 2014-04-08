@@ -1,5 +1,6 @@
 require 'socket'
-load('commands.rb')
+load('methods_io.rb')
+load('methods_irc.rb')
 load('classes.rb')
 
 puts "r.irc v0.1b"
@@ -11,7 +12,9 @@ port = (port.length==0) ? "6667" : port
 
 puts "Connecting to #{server}:#{port} ..."
 
-s = TCPSocket.new server,port
+(s = TCPSocket.new server,port) or puts "fail"
+
+sleep(10)
 
 puts "Connection successful"
 print "User name: "

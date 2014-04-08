@@ -1,4 +1,5 @@
-# commands.rb | all irc commands
+# methods_irc.rb
+# all irc commands
 
 def c_admin(s,server,caller)
 	# Instructs the server to return information about the administrator of the server, or the current server if none specified

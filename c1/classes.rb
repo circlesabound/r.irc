@@ -1,4 +1,4 @@
-# r.irc classes file
+# r.irc classes
 
 class Profile
 	attr_reader :profileID, :profileName, :nickname, :realname, :username
