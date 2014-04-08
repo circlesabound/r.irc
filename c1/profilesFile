@@ -1,0 +1,35 @@
+#####
+#
+# profilesFile
+#
+#####
+#
+# this file contains the user defined profiles for r.irc
+# 
+# PROFILE LAYOUT:
+#
+# [profile ID] {must be positive integer, UNIQUE}
+# [profile name]
+# [nickname]
+# [realname]
+# [username] {optional, value is '-1' if empty}
+#
+
+
+# number of profiles
+2
+
+####### PROFILES START HERE #######
+
+0
+profile1
+johnny
+john
+archax
+
+
+1
+is
+another
+section
+lel

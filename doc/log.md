@@ -116,3 +116,9 @@ TODO - define what needs to go into a Settings file. Determine layout of Profile
 # 03/04
 Shoes installed on laptop! Just in time for camp, I can now solely develop on my laptop meaning I can do much more on camp.
 
+# 07/04 - 08/04
+Yr 12 study camp. Making great use of the 8 or so free hours between night activity and breakfast. So far, I have branched off the project whilst developing the file IO i.e. classes, methods, file structures. Correctly coded and implemented profile class and profileFile, making use of a nice function I developed which allows reading from files with support for ignoring blank lines and bash-style whole-line comments.
+
+PROBLEM - Due to poor foresight, no local IRC server has been installed, and having spent the greater part of an hour toiling on this issue, I have decided that, bad luck me, I shall develop blind and/or aspects that don't require interaction with the IRC server, such as file IO.
+
+TODO - settingsFile and settings class.

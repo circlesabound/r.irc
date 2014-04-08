@@ -17,21 +17,49 @@ class Profile
 		@username = username # can be optional
 		@@profileCount += 1
 	end
-	def create(
+	def self.load(
+			profilesFileName
+		)
+		profilesFile = File.new(profilesFileName,"r")
+		profileCount = Integer(f_getsLine(profilesFile))
+		profilesFileLine = Array.new()
+		userProfiles = Array.new()
+		for i in 0..profileCount-1
+			for j in 0..4
+				profilesFileLine[j] = f_getsLine(profilesFile)
+			end
+			userProfiles[i] = Profile.new(
+				profilesFileLine[0],
+				profilesFileLine[1],
+				profilesFileLine[2],
+				profilesFileLine[3],
+				profilesFileLine[4]
+				)
+		end
+		return userProfiles
+	end
+	def self.create(
 			profileID,
 			profileName,
 			nickname,
 			realname,
 			username
 		)
-		# write to end of profileFile
+		exitCode = 0
+		f_createCopy("profilesFile","profilesFile.temp")
+		# magic goes here once I've figured it out
+		Profile.new(profileID, profileName, nickname, realname, username)
+		return exitCode
 	end
-	def delete(
+	def self.delete(
 			profileID
 		)
+		exitCode = 0
+		f_createCopy("profilesFile","profileFile.temp")
 		# delete all from profileID declaration to next profileID declaration
+		return exitCode
 	end
-	def modify(
+	def self.modify(
 			profileID,
 			profileName,
 			nickname,
@@ -46,7 +74,7 @@ class Profile
 		# rename profileFile.temp > profileFile [exitCode = 5]
 		return exitCode
 	end
-	def count
+	def self.count
 		return @@profileCount
 	end
 end
