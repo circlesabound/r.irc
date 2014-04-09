@@ -14,8 +14,6 @@ puts "Connecting to #{server}:#{port} ..."
 
 (s = TCPSocket.new server,port) or puts "fail"
 
-sleep(10)
-
 puts "Connection successful"
 print "User name: "
 username=gets.chomp

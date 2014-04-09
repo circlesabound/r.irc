@@ -1,10 +1,13 @@
-#####
-#
-# profilesFile
-#
-#####
+################
+#              #
+# profilesFile #
+#              #
+################
 #
 # this file contains the user defined profiles for r.irc
+# 
+
+
 # 
 # PROFILE LAYOUT:
 #
@@ -16,7 +19,9 @@
 #
 
 
-# number of profiles
+# NUMBER OF PROFILES
+# make sure this value is updated whenever
+# profilesFile is manually edited
 2
 
 ####### PROFILES START HERE #######
@@ -32,4 +37,4 @@ archax
 is
 another
 section
-lel
+-1

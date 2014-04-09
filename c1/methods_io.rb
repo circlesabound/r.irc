@@ -16,7 +16,7 @@ def f_getsLine(
 		file
 	)
 	while line.strip.nil? == true || line == "\n" || line[0] == '#'
-		line = file.gets()
+		line = file.gets().chomp
 	end
 	return line
 end
@@ -34,7 +34,7 @@ def f_createCopy(
 	exitCode = 0
 	originalFile = File.new(originalFileName,"r")
 	copy = File.new(copyName,"w+")
-	while line = originalFile.gets()
+	while line = originalFile.gets().chomp
 		begin
 			copy.print line
 		rescue Errno.EACCES

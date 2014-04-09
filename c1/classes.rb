@@ -86,4 +86,12 @@ class Settings
 		)
 		@defaultProfile = defaultProfile
 	end
+	def self.load(
+			settingsFileName
+		)
+		settingsFile = File.new(settingsFileName,"r")
+		defaultProfile = f_getsLine(settingsFile)
+		settings[0] = Settings.new(defaultProfile)
+		return settings
+	end
 end
