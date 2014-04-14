@@ -122,3 +122,10 @@ Yr 12 study camp. Making great use of the 8 or so free hours between night activ
 PROBLEM - Due to poor foresight, no local IRC server has been installed, and having spent the greater part of an hour toiling on this issue, I have decided that, bad luck me, I shall develop blind and/or aspects that don't require interaction with the IRC server, such as file IO.
 
 TODO - settingsFile and settings class.
+
+# 09/04
+Austin has allowed me to use his IRC channel on the Rizon IRC server to develop and test r.IRC on. Good for me as I do not wish to repeat the hour-long process 
+of configuring an IRC server on my laptop. Since the local IRC server on my desktop still functions, this new availability of a test server means that I can test 
+communication with an IRC server whilst not connected to the LAN at home, as well as providing for realistic delays due to higher ping.
+
+TODO - Rest of Check 2 documentation, such as structure chart, data dictionary, and test data.
