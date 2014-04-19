@@ -124,8 +124,11 @@ PROBLEM - Due to poor foresight, no local IRC server has been installed, and hav
 TODO - settingsFile and settings class.
 
 # 09/04
-Austin has allowed me to use his IRC channel on the Rizon IRC server to develop and test r.IRC on. Good for me as I do not wish to repeat the hour-long process 
-of configuring an IRC server on my laptop. Since the local IRC server on my desktop still functions, this new availability of a test server means that I can test 
-communication with an IRC server whilst not connected to the LAN at home, as well as providing for realistic delays due to higher ping.
+Austin has allowed me to use his IRC channel on the Rizon IRC server to develop and test r.IRC on. Good for me as I do not wish to repeat the hour-long process of configuring an IRC server on my laptop. Since the local IRC server on my desktop still functions, his new availability of a test server means that I can test communication with an IRC server whilst not connected to the LAN at home, as well as providing for realistic delays due to higher ping.
 
 TODO - Rest of Check 2 documentation, such as structure chart, data dictionary, and test data.
+
+# 19/04
+Integrated settingsFile and profilesFile into the commandline program and translated a few more IRC commands into Ruby functions. The former action has allowed for the increase in speed of testing, as I not longer have to input user details in order to connect to a test server.
+
+TODO - Make a GUI version of this build. An update to the GUI side of things is long overdue, as I have been focusing on back-end work like file interactions.

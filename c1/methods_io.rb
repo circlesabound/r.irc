@@ -15,7 +15,8 @@
 def f_getsLine(
 		file
 	)
-	while line.strip.nil? == true || line == "\n" || line[0] == '#'
+	line = file.gets().chomp
+	while line.strip.nil? == true || line == "\n" || line[0] == '#' || line == ""
 		line = file.gets().chomp
 	end
 	return line

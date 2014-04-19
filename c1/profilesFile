@@ -22,15 +22,15 @@
 # NUMBER OF PROFILES
 # make sure this value is updated whenever
 # profilesFile is manually edited
-2
+3
 
 ####### PROFILES START HERE #######
 
 0
-profile1
-johnny
-john
-archax
+defaultProfile
+rircTester
+rirc
+-1
 
 
 1
@@ -38,3 +38,9 @@ is
 another
 section
 -1
+
+2
+realProfile
+mrmozilla
+john
+mrmozilla
