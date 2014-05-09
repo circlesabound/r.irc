@@ -14,7 +14,7 @@ class Profile
 		@profileName = profileName
 		@nickname = nickname
 		@realname = realname
-		@username = username # can be optional
+		@username = username # can be optional - N/A value is '-1'
 		@@profileCount += 1
 	end
 	def self.load(
@@ -72,6 +72,7 @@ class Profile
 		# confirm changes [exitCode = 3]
 		# rename original to profileFile.bak [exitCode = 4]
 		# rename profileFile.temp > profileFile [exitCode = 5]
+		# process complete [exitCode = 0]
 		return exitCode
 	end
 	def self.count
