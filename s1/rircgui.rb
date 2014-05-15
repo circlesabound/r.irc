@@ -4,13 +4,17 @@ load('../common/methods_irc.rb')
 load('../common/classes.rb')
 
 threads = []
-threads << t_gui = Thread.new{
-	Shoes.app {
+threads << t_gui = Thread.new do
+	Shoes.app do
 		# GUI wrapper
-	}
-}
+	end
+end
 
-threads << t_back = Thread.new{
+threads << t_back = Thread.new do
 	# back end
 	startup()
-}
+end
+
+threads.each do |thr|
+	thr.join
+end

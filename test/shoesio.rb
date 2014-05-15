@@ -1,5 +1,3 @@
-require 'rubygems'
-
 Shoes.app {
 	push = button "Push me!"
 	push.click {
