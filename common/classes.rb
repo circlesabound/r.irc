@@ -82,7 +82,7 @@ end
 
 class Settings
 	attr_reader :defaultProfile
-	def initialise(
+	def initialize(
 			defaultProfile
 		)
 		@defaultProfile = defaultProfile
@@ -94,5 +94,16 @@ class Settings
 		defaultProfile = f_getsLine(settingsFile)
 		settings[0] = Settings.new(defaultProfile)
 		return settings
+	end
+end
+
+class Application
+	attr_accessor :currentTab, :currentDetail
+	def initialize(
+			currentTab
+			currentDetail
+		)
+		@currentTab = currentTab
+		@currentDetail = currentDetail
 	end
 end

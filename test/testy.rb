@@ -1,9 +1,11 @@
 Shoes.app(title:"this is a title") do
-	background black
-	border white,strokewidth:1
-	@input = edit_line
-	button "press me" do
-		alert(@input.text)
-		border white
+	flow margin: 2 do
+		border silver, strokewidth:1
+		flow margin: 2 do
+			@input = edit_line
+			button "press me" do
+				alert(@input.text)
+			end
+		end
 	end
 end
