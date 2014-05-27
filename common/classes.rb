@@ -92,7 +92,7 @@ class Settings
 		)
 		settingsFile = File.new(settingsFileName,"r")
 		defaultProfile = f_getsLine(settingsFile)
-		settings[0] = Settings.new(defaultProfile)
+		settings = Settings.new(defaultProfile)
 		return settings
 	end
 end

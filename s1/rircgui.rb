@@ -6,7 +6,7 @@ load('../common/methods_irc.rb')
 $threads = []
 $threads << t_gui = Thread.new do
 	rirc = Shoes.app do # gui wrapper
-		#
+		button "HI"
 	end
 end
 
