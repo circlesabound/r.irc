@@ -1,4 +1,4 @@
-def startup()
+def startup
 	$profiles = Profile.load("../common/profilesFile")
 	$settings = Settings.load("../common/settingsFile")
 	# for i in 0..Profile.count-1

@@ -100,7 +100,7 @@ end
 class Application
 	attr_accessor :currentTab, :currentDetail
 	def initialize(
-			currentTab
+			currentTab,
 			currentDetail
 		)
 		@currentTab = currentTab

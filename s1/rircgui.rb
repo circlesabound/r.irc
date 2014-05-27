@@ -2,17 +2,20 @@ require 'socket'
 load('../common/classes.rb')
 load('../common/methods_io.rb')
 load('../common/methods_irc.rb')
+load('../common/methods_rirc.rb')
 
 $threads = []
 $threads << t_gui = Thread.new do
 	rirc = Shoes.app do # gui wrapper
-		button "HI"
+		button "HI" do
+			alert("#{$currentTab}")
+		end
 	end
 end
 
 $threads << t_back = Thread.new do
 	# back end
-	startup()
+	startup
 end
 
 $threads.each do |thr|
