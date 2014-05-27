@@ -132,3 +132,14 @@ TODO - Rest of Check 2 documentation, such as structure chart, data dictionary, 
 Integrated settingsFile and profilesFile into the commandline program and translated a few more IRC commands into Ruby functions. The former action has allowed for the increase in speed of testing, as I not longer have to input user details in order to connect to a test server.
 
 TODO - Make a GUI version of this build. An update to the GUI side of things is long overdue, as I have been focusing on back-end work like file interactions.
+
+# 30/04
+Sketched out a boxed, layered layout of the window, including what frames encompass which other frames. This should help me in determining what areas can be isolated in separate submodules, as well as what parameters to pass between these submodules.
+
+# 05/05
+A pre-release of Shoes 4 has been published. I have switched to it, because as far as I can determine there are no disadvantages - the missing features in Shoes 4 mostly didn't work in Shoes 3 anyway.
+
+PROBLEM - I just found out that Shoes still has no support for a native application menu e.g. file, edit, help buttons on the window decorations. This is problematic, as I will have to revise my sketches to incorporate these functions on single button - much like how Firefox does it with its unified function button.
+
+# 15/05
+Created two new classes - Tab and Application. The former stores information about a single tab, and is to be used as elements in an array that acts as all the tabs. The latter should only have one instance, and is to be used to store general information about the program instance, for example the currently selected tab and the currently selected option in the detail pane.

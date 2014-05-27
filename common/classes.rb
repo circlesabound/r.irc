@@ -8,13 +8,13 @@ class Profile
 			profileName,
 			nickname,
 			realname,
-			username
+			username = -1
 		)
-		@profileID = profileID
-		@profileName = profileName
-		@nickname = nickname
-		@realname = realname
-		@username = username # can be optional - N/A value is '-1'
+		@profileID 		= profileID
+		@profileName 	= profileName
+		@nickname 		= nickname
+		@realname 		= realname
+		@username 		= username # can be optional - N/A value is '-1'
 		@@profileCount += 1
 	end
 	def self.load(
@@ -29,11 +29,11 @@ class Profile
 				profilesFileLine[j] = f_getsLine(profilesFile)
 			end
 			userProfiles[i] = Profile.new(
-				profilesFileLine[0],
-				profilesFileLine[1],
-				profilesFileLine[2],
-				profilesFileLine[3],
-				profilesFileLine[4]
+					profilesFileLine[0],
+					profilesFileLine[1],
+					profilesFileLine[2],
+					profilesFileLine[3],
+					profilesFileLine[4]
 				)
 		end
 		return userProfiles
@@ -48,7 +48,13 @@ class Profile
 		exitCode = 0
 		f_createCopy("profilesFile","profilesFile.temp")
 		# magic goes here once I've figured it out
-		Profile.new(profileID, profileName, nickname, realname, username)
+		Profile.new(
+				profileID,
+				profileName,
+				nickname,
+				realname,
+				username
+			)
 		return exitCode
 	end
 	def self.delete(
@@ -81,18 +87,21 @@ class Profile
 end
 
 class Settings
-	attr_reader :defaultProfile
+	attr_reader :defaultProfile, :defaultDetail
 	def initialize(
-			defaultProfile
+			defaultProfile,
+			defaultDetail
 		)
 		@defaultProfile = defaultProfile
+		@defaultDetail 	= defaultDetail
 	end
 	def self.load(
 			settingsFileName
 		)
 		settingsFile = File.new(settingsFileName,"r")
 		defaultProfile = f_getsLine(settingsFile)
-		settings = Settings.new(defaultProfile)
+		defaultDetail = f_getsLine(settingsFile)
+		settings = Settings.new(defaultProfile,defaultDetail)
 		return settings
 	end
 end
@@ -103,7 +112,35 @@ class Application
 			currentTab,
 			currentDetail
 		)
-		@currentTab = currentTab
-		@currentDetail = currentDetail
+		@currentTab 	= currentTab # a value of -1 means there are no tabs
+		@currentDetail 	= currentDetail
+	end
+	def self.load(
+			settings
+		)
+		application = Application.new(-1,settings.defaultDetail)
+		return application
+	end
+end
+
+class Tab
+	attr_reader :id, :connection
+	attr_accessor :name
+	@@tabId = 0
+	def initialize(
+			connection,
+			name
+		)
+		@id 		= @@tabId
+		@connection = connection
+		@name 		= name
+		@@tabId 	+= 1
+	end
+	def self.create(
+			connection,
+			name = -1
+		)
+		tab = Tab.new(connection,name)
+		return tab
 	end
 end
