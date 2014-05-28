@@ -1,5 +1,5 @@
 require 'socket'
-load('../commands.rb')
+# load('../commands.rb')
 
 Shoes.app {
 	def u_input
@@ -51,4 +51,8 @@ Shoes.app {
 			# close window
 		end
 	}
+
+	threads.each do |thr|
+		thr.join
+	end
 }

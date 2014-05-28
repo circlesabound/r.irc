@@ -76,7 +76,7 @@ def g_statusBar
 	end
 end
 
-def g_noTabPage
+def g_newTabPage
 	# @noTabPage = flow :width=>1.0, :height=>1.0 do
 	# 	stack :width=>0.3, :height=>1.0 # left padding
 	# 	stack :width=>0.4, :height=>1.0 do # middle container
@@ -87,13 +87,35 @@ def g_noTabPage
 	# 	end
 	# 	stack :width=>0.3, :height=>1.0 # right  padding
 	# end
-	@noTabButton = button "No Tabs", :left=>0.5, :top=>0.5 do
-		$application.currentTab = 1
+	@newTabButton = button "No Tabs", :left=>0.5, :top=>0.5 do
+		server = ask("server? :")
+		port = ask("port? :")
+		s = TCPSocket.new "#{server}","#{port}"
+		$tabs << Tab.create(s,"#{server}:#{port}")
+		@tabList.text = ""
+		$tabs.each do |t|
+			@tabList.text << t.name << " | "
+		end
+		@newTabButton.hide()
+		$tabs[0].connection.puts "USER #{$profiles[$settings.defaultProfile].username} * #{$profiles[$settings.defaultProfile].realname}"
+		$tabs[0].connection.puts "NICK #{$profiles[$settings.defaultProfile].nickname}"
+		$tabs[0].connection.puts "JOIN #test"
+		while incoming = $tabs[0].connection.gets do
+			@history.text << incoming << "\n"
+		end
 	end
 end
 
-def g_tabBar
+def g_tabBarContainer
 	@tabBarContainer = flow :width=>1.0, :height=>FONT_SIZE+25 do
-		background black
+		border black, :strokewidth=>1
+		@tabList = para ""
+	end
+end
+
+def g_chatContainer
+	@chatContainer = flow :width=>1.0, :height=>1.0, :margin=>10 do
+		border black, :strokewidth=>1
+		@history = para
 	end
 end

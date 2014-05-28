@@ -99,8 +99,8 @@ class Settings
 			settingsFileName
 		)
 		settingsFile = File.new(settingsFileName,"r")
-		defaultProfile = f_getsLine(settingsFile)
-		defaultDetail = f_getsLine(settingsFile)
+		defaultProfile = Integer(f_getsLine(settingsFile))
+		defaultDetail = Integer(f_getsLine(settingsFile))
 		settings = Settings.new(defaultProfile,defaultDetail)
 		return settings
 	end
