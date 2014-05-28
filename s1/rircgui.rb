@@ -20,7 +20,7 @@ $threads << t_gui = Thread.new do
 				# draw "empty window" with new tab prompt
 				g_noTabPage
 			else
-				# at least one tab open
+				g_tabBar
 			end
 		end
 	end
@@ -29,13 +29,13 @@ end
 $threads << t_back = Thread.new do
 	# back end
 	startup
-	loop do
-		if($application.currentTab == -1)
-			# there are no tabs open !
-		else
-			# there is at least one tab open
-		end
-	end
+	# loop do
+	# 	if($application.currentTab == -1)
+	# 		# there are no tabs open !
+	# 	else
+	# 		# there is at least one tab open
+	# 	end
+	# end
 end
 
 $threads.each do |thr|

@@ -87,5 +87,13 @@ def g_noTabPage
 	# 	end
 	# 	stack :width=>0.3, :height=>1.0 # right  padding
 	# end
-	@noTabButton = button "No Tabs", :left=>0.5, :top=>0.5
+	@noTabButton = button "No Tabs", :left=>0.5, :top=>0.5 do
+		$application.currentTab = 1
+	end
+end
+
+def g_tabBar
+	@tabBarContainer = flow :width=>1.0, :height=>FONT_SIZE+25 do
+		background black
+	end
 end
