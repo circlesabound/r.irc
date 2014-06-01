@@ -91,17 +91,20 @@ def g_newTabPage
 		server = ask("server? :")
 		port = ask("port? :")
 		s = TCPSocket.new "#{server}","#{port}"
-		$tabs << Tab.create(s,"#{server}:#{port}")
-		@tabList.text = ""
-		$tabs.each do |t|
-			@tabList.text << t.name << " | "
-		end
+		currentTab = Tab.create(s,"#{server}:#{port}")
+		$tabs[currentTab.id] = currentTab
+		# $tabs << currentTab = Tab.create(s,"#{server}:#{port}")
+		alert("#{$tabs[currentTab.id].name}")
+		@tabList.text << currentTab.name << " | "
 		@newTabButton.hide()
 		$tabs[0].connection.puts "USER #{$profiles[$settings.defaultProfile].username} * #{$profiles[$settings.defaultProfile].realname}"
 		$tabs[0].connection.puts "NICK #{$profiles[$settings.defaultProfile].nickname}"
-		$tabs[0].connection.puts "JOIN #test"
+		$tabs[0].connection.puts "JOIN #nsbhs"
+		# while incoming = $tabs[0].connection.gets do
+		# 	@history.text << incoming << "\n"
+		# end
 		while incoming = $tabs[0].connection.gets do
-			@history.text << incoming << "\n"
+			alert(incoming)
 		end
 	end
 end
@@ -116,6 +119,6 @@ end
 def g_chatContainer
 	@chatContainer = flow :width=>1.0, :height=>1.0, :margin=>10 do
 		border black, :strokewidth=>1
-		@history = para
+		@history = para ""
 	end
 end

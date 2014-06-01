@@ -18,8 +18,8 @@ $threads_tabs = []
 			g_statusBar()
 			# at least one of the below two must be hidden at any time!
 			g_tabBarContainer()
-			g_newTabPage()
 			g_chatContainer()
+			g_newTabPage()
 			# if($application.currentTab == -1)
 			# 	# no tabs open
 			# 	# draw "empty window" with new tab prompt
