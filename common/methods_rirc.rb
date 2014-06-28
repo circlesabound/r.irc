@@ -4,7 +4,7 @@
 ##                                                                              ##
 ##################################################################################
 
-def startup
+def b_startup
 	$profiles = Profile.load("../common/profilesFile")
 	$settings = Settings.load("../common/settingsFile")
 	# for i in 0..Profile.count-1
@@ -14,6 +14,20 @@ def startup
 	# end
 	$tabs = [] # init tab array
 	$application = Application.load($settings)
+end
+
+def b_newTab(
+		server,
+		port,
+		name = -1
+	)
+	s = TCPSocket.new("#{server},#{port}")
+	if name != -1
+		t = Tab.create(s,"#{name}")
+	else
+		t = Tab.create(s,"#{server}:#{port}")
+	end
+	$tabs[t.id] = t
 end
 
 ##################################################################################
@@ -90,12 +104,13 @@ def g_newTabPage
 	@newTabButton = button "No Tabs", :left=>0.5, :top=>0.5 do
 		server = ask("server? :")
 		port = ask("port? :")
-		s = TCPSocket.new "#{server}","#{port}"
-		currentTab = Tab.create(s,"#{server}:#{port}")
-		$tabs[currentTab.id] = currentTab
+		b_newTab(server,port)
+		# s = TCPSocket.new "#{server}","#{port}"
+		# currentTab = Tab.create(s,"#{server}:#{port}")
+		# $tabs[currentTab.id] = currentTab
 		# $tabs << currentTab = Tab.create(s,"#{server}:#{port}")
-		alert("#{$tabs[currentTab.id].name}")
-		@tabList.text << currentTab.name << " | "
+		alert("#{$tabs[0].name}")
+		@tabList.text << $tabs[0].name << " | "
 		@newTabButton.hide()
 		$tabs[0].connection.puts "USER #{$profiles[$settings.defaultProfile].username} * #{$profiles[$settings.defaultProfile].realname}"
 		$tabs[0].connection.puts "NICK #{$profiles[$settings.defaultProfile].nickname}"

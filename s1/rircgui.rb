@@ -13,7 +13,7 @@ $threads_tabs = []
 		height: WINDOW_HEIGHT
 	) do # gui wrapper
 	$threads << t_gui = Thread.new do
-		flow :margin=>2, :height=>1.0, :width=>1.0 do
+		flow :height=>1.0, :width=>1.0 do
 			border silver, :strokewidth=>1 # faint interior windor border
 			g_statusBar()
 			# at least one of the below two must be hidden at any time!
@@ -34,7 +34,7 @@ $threads_tabs = []
 
 	$threads << t_back = Thread.new do
 		# back end
-		startup()
+		b_startup()
 		# loop do
 		# 	if($application.currentTab == -1)
 		# 		# there are no tabs open !
