@@ -1,7 +1,7 @@
 # r.irc classes
 
 class Profile
-	attr_reader :profileID, :profileName, :nickname, :realname, :username
+	attr_accessor :profileID, :profileName, :nickname, :realname, :username
 	@@profileCount = 0
 	def initialize(
 			profileID,

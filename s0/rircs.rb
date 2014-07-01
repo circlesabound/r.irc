@@ -10,10 +10,10 @@ Shoes.app {
 			}
 		}
 	end
-	s = TCPSocket.new "localhost","6667"
-	s.puts "USER username 0 * realname"
+	s = TCPSocket.new "irc.rizon.net","6667"
+	s.puts "USER rircs 0 * rircs"
 	s.puts "NICK rircs0"
-	s.puts "JOIN #test"
+	s.puts "JOIN #nsbhs"
 	threads=[]
 	stack {
 		para "r.irc s0"

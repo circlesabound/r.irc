@@ -33,6 +33,12 @@ for k in 0..profileCount-1
 	end
 end
 
+# if userProfiles[currentProfile].username == "-1"
+# 	userProfiles[currentProfile].username = "user"
+# end
+
+userProfiles[currentProfile].username = (userProfiles[currentProfile].username == "-1") ? "user" : userProfiles[currentProfile].username
+
 s.puts "NICK #{userProfiles[currentProfile].nickname}"
 s.puts "USER #{userProfiles[currentProfile].username} 0 * :#{userProfiles[currentProfile].realname}"
 

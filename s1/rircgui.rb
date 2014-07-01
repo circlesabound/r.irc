@@ -5,15 +5,15 @@ load('../common/methods_io.rb')
 load('../common/methods_irc.rb')
 load('../common/methods_rirc.rb')
 
-$threads = []
-$threads_tabs = []
 @rirc = Shoes.app(
 		title: "r.irc #{VERSION}",
 		width: WINDOW_WIDTH,
 		height: WINDOW_HEIGHT
 	) do # gui wrapper
+	$threads = []
+	$threads_tabs = []
 	$threads << t_gui = Thread.new do
-		flow :height=>1.0, :width=>1.0 do
+		@flow1 = flow :height=>1.0 do
 			border silver, :strokewidth=>1 # faint interior windor border
 			g_statusBar()
 			# at least one of the below two must be hidden at any time!
