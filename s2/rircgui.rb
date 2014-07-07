@@ -9,11 +9,6 @@ load('../common/methods_rirc.rb')
 
 s = TCPSocket.new "irc.rizon.net","6667"
 
-# profilesFile = File.new("../common/profilesFile","r")
-# settingsFile = File.new("../common/settingsFile","r")
-# profileCount = Integer(f_getsLine(profilesFile))
-# userProfiles = Profile.load("../common/profilesFile")
-
 b_startup
 
 for k in 0..Profile.count-1
@@ -29,13 +24,13 @@ s.puts "JOIN \#nsbhs"
 
 messages = []
 b_threads = []
-queue = Queue.new
+# queue = Queue.new
 
 b_threads << receive = Thread.new do
 	while incoming = s.gets
 		# messages << incoming
 		b_addToHistory(messages,incoming)
-		queue << incoming
+		# queue << incoming
 	end
 end
 
@@ -43,40 +38,47 @@ b_threads << send = Thread.new do
 	while outgoing = gets
 		# messages << outgoing
 		b_addToHistory(messages,outgoing)
-		queue << outgoing
+		# queue << outgoing
 	end
 end
 
 b_threads << gui = Thread.new do
-	Shoes.app do
-		@messagebox = stack do
-			# g_para("test")
-		end
-		every 0.5 do
-			
-			######################
-
-			# the following block is inefficient
-			# it redraws all the contents of @messagebox every time
-
-			@messagebox.clear
-			messages.each do |m|
-				@messagebox.append do
-					g_para("#{m}")
-				end
+	Shoes.app(
+			title: "r.irc #{VERSION}",
+			width: WINDOW_WIDTH,
+			height: WINDOW_HEIGHT
+		) do
+		@flow = flow do
+			@messagebox = stack :height => 600, :scroll =>true do
+				# g_para("test")
 			end
+			every 0.5 do
+				
+				######################
 
-			######################
+				# the following block is inefficient
+				# it redraws all the contents of @messagebox every time
 
-			# the following block would seem more efficient
-			# but has a freezing side effect
+				@messagebox.clear
+				messages.each do |m|
+					@messagebox.append do
+						g_para("#{m}")
+					end
+				end
 
-			# @messagebox.append do
-			# 	para "#{queue.pop}"
-			# end
+				######################
 
-			####################
+				# the following block would seem more efficient
+				# but has a freezing side effect
+
+				# @messagebox.append do
+				# 	para "#{queue.pop}"
+				# end
+
+				####################
+			end
 		end
+		g_statusBar
 	end
 end
 
