@@ -30,6 +30,18 @@ def b_newTab(
 	$tabs[t.id] = t
 end
 
+def b_addToHistory(
+		messageArray,
+		newLine
+	)
+	if messageArray.count >= MAX_HISTORY
+		messageArray.shift
+		messageArray << newLine
+	else
+		messageArray << newLine
+	end
+end
+
 ##################################################################################
 ##                                                                              ##
 ##     FRONT END METHODS                                                        ##

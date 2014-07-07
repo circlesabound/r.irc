@@ -1,36 +1,40 @@
 require 'socket'
 # load('../commands.rb')
 
-Shoes.app {
+Shoes.app do
 	def u_input
-		@inputDisplay.clear
-		@inputArray.each { |t|
-			@inputDisplay.append {
-				para t
+		every 0.1 do
+			@inputDisplay.clear
+			@inputArray.each { |t|
+				@inputDisplay.append {
+					para t
+				}
 			}
-		}
+		end
 	end
 	s = TCPSocket.new "irc.rizon.net","6667"
 	s.puts "USER rircs 0 * rircs"
 	s.puts "NICK rircs0"
 	s.puts "JOIN #nsbhs"
-	threads=[]
+	threads = []
 	stack {
 		para "r.irc s0"
-		@inputArray=[]
-		@inputDisplay=stack
+		@inputArray = []
+		@inputDisplay = stack
 	}
 	@inputflow = flow {
 		@input = edit_line
-		threads << t_input = Thread.new {
-			@inputflow.append button("submit") {
+		# threads << t_input = Thread.new {
+			button("submit") do
 				if @input.text[0]=="/"
 					strippedCommand=@input.text[1..@input.text.length].upcase
 					case strippedCommand
 						when "QUIT","BYE","EXIT"
 							s.close()
 							@inputArray << "Bye"
-							threads.each {|t| t.kill}
+							threads.each do |thr|
+								thr.kill
+							end
 					end
 				else
 					@inputArray << "> " + @input.text
@@ -38,14 +42,16 @@ Shoes.app {
 				end
 				u_input
 				@input.text = ""
-			}
-		}
-		threads << t_read = Thread.new {
-			while incoming = s.gets
-				@inputArray << incoming
-				u_input
 			end
-		}
+		# }
+		threads << t_read = Thread.new do
+			every 0.1 do
+				while incoming = s.gets
+					@inputArray << incoming
+					u_input
+				end
+			end
+		end
 		# threads.each {|t| t.join}
 		if threads.length()==0
 			# close window
@@ -55,4 +61,4 @@ Shoes.app {
 	threads.each do |thr|
 		thr.join
 	end
-}
+end

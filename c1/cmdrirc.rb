@@ -1,7 +1,7 @@
 require 'socket'
-load('methods_io.rb')
-load('methods_irc.rb')
-load('classes.rb')
+load('../common/methods_io.rb')
+load('../common/methods_irc.rb')
+load('../common/classes.rb')
 
 puts "r.irc v0.2"
 print "Enter server location: "
@@ -39,8 +39,10 @@ end
 
 userProfiles[currentProfile].username = (userProfiles[currentProfile].username == "-1") ? "user" : userProfiles[currentProfile].username
 
-s.puts "NICK #{userProfiles[currentProfile].nickname}"
-s.puts "USER #{userProfiles[currentProfile].username} 0 * :#{userProfiles[currentProfile].realname}"
+# s.puts "NICK #{userProfiles[currentProfile].nickname}"
+c_nick(s,userProfiles[currentProfile].nickname)
+# s.puts "USER #{userProfiles[currentProfile].username} 0 * :#{userProfiles[currentProfile].realname}"
+c_user(s,userProfiles[currentProfile].username,0,userProfiles[currentProfile].realname)
 
 # print "Nickname: "
 # nickname = gets.chomp
@@ -53,8 +55,10 @@ s.puts "USER #{userProfiles[currentProfile].username} 0 * :#{userProfiles[curren
 # s.puts "USER " + user
 
 print "Enter channel name (begins with \# or \$): "
-channel = gets.chomp
-s.puts "JOIN #{channel}"
+channel = []
+channel << gets.chomp
+# s.puts "JOIN #{channel}"
+c_join(s,channel)
 
 threads = []
 threads << t_read = Thread.new do
@@ -63,7 +67,7 @@ threads << t_read = Thread.new do
 	end
 end
 threads << t_write = Thread.new do
-	loop {
+	loop do
 		input = gets.chomp
 		if input[0]=="/" && input[1]!="/"
 			command=input[1..input.length]
@@ -79,7 +83,9 @@ threads << t_write = Thread.new do
 		else
 			c_privmsg(s,channel,input,0)
 		end
-	}
+	end
 end
 
-threads.each {|thr| thr.join}
+threads.each do |thr|
+	thr.join
+end

@@ -143,3 +143,10 @@ PROBLEM - I just found out that Shoes still has no support for a native applicat
 
 # 15/05
 Created two new classes - Tab and Application. The former stores information about a single tab, and is to be used as elements in an array that acts as all the tabs. The latter should only have one instance, and is to be used to store general information about the program instance, for example the currently selected tab and the currently selected option in the detail pane.
+
+# I SHOULD PUT STUFF HERE
+
+# 07/07
+Made substantial progress in comparison to the past few sessions.
+
+PROBLEM - I encountered a very strange error where the GUI would stop responding UNLESS a message was incoming i.e. would not respond to scrolling, text selection. I attributed this to my rather roundabout threading of the GUI and the background network I/O threads. I eventually found out that, due to the nature of Ruby's thread scheduler, priority was being given to other threads (not the GUI) when no messages were being received, and so I separated the drawing of the message box contents from the rest of the GUI and limited the maximum lines kept in history to ensure the smoothness of the GUI.
