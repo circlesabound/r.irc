@@ -186,7 +186,6 @@ end
 def c_quit(s,message="")
 	# Disconnects the user from the server.
 	s.puts "QUIT #{message}"
-	s.close()
 end
 
 def c_restart(s)

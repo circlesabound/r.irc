@@ -1,11 +1,11 @@
 require 'socket'
 require 'thread'
 require 'shoes'
-load('../common/constants.rb')
-load('../common/classes.rb')
-load('../common/methods_io.rb')
-load('../common/methods_irc.rb')
-load('../common/methods_rirc.rb')
+require_relative '../common/constants.rb'
+require_relative '../common/classes.rb'
+require_relative '../common/methods_io.rb'
+require_relative '../common/methods_irc.rb'
+require_relative '../common/methods_rirc.rb'
 
 s = TCPSocket.new "irc.rizon.net","6667"
 
@@ -80,6 +80,11 @@ b_threads << gui = Thread.new do
 		end
 		g_statusBar
 	end
+	c_part(s,"\#nsbhs","bye")
+	send.kill
+	receive.kill
+	c_quit(s)
+	s.close
 end
 
 b_threads.each do |t|
