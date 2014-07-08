@@ -1,0 +1,8 @@
+Similar to cgi-irc
+
+new window for every recipient of a message
+whenever a new connection/chat/whatever is made through irc commands on ANY window, spawn a new window with chat for new recipient
+this process should be synonymous to using gui commands
+
+so we have a main window, listing all current chats and the rest of the main interface
+then multiple windows, each with a specific chat
