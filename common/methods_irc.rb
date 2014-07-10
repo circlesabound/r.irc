@@ -93,7 +93,7 @@ def c_lusers(s,mask="",server="")
 	s.puts "LUSERS #{mask} #{server}"
 end
 
-def c_mode_user(s,nickname,flags_on="",flags_off="")
+def c_mode_user(s,nickname,flags_on=[],flags_off=[])
 	# Sets user modes
 	# <flags_on> and <flags_off> are arrays of strings
 	flagsList = (flags_on.count == 0) ? "" : "+"
@@ -110,7 +110,7 @@ def c_mode_user(s,nickname,flags_on="",flags_off="")
 	s.puts "MODE #{nickname} #{flagsList}"
 end
 
-def c_mode_channel(s,channel,flags_on,flags_off)
+def c_mode_channel(s,channel,flags_on=[],flags_off=[])
 	# Sets channel modes
 	flagsList = (flags_on.count == 0) ? "" : "+"
 	flags_on.each do |f|

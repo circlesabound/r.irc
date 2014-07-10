@@ -14,7 +14,7 @@ class Profile
 		@profileName 	= profileName
 		@nickname 		= nickname
 		@realname 		= realname
-		@username 		= username # can be optional - N/A value is '-1'
+		@username 		= username
 		@@profileCount += 1
 	end
 	def self.load(
@@ -29,12 +29,12 @@ class Profile
 				profilesFileLine[j] = f_getsLine(profilesFile)
 			end
 			userProfiles[i] = Profile.new(
-					profilesFileLine[0],
-					profilesFileLine[1],
-					profilesFileLine[2],
-					profilesFileLine[3],
-					profilesFileLine[4]
-				)
+				profilesFileLine[0],
+				profilesFileLine[1],
+				profilesFileLine[2],
+				profilesFileLine[3],
+				profilesFileLine[4]
+			)
 		end
 		return userProfiles
 	end
@@ -49,12 +49,12 @@ class Profile
 		f_createCopy("profilesFile","profilesFile.temp")
 		# magic goes here once I've figured it out
 		Profile.new(
-				profileID,
-				profileName,
-				nickname,
-				realname,
-				username
-			)
+			profileID,
+			profileName,
+			nickname,
+			realname,
+			username
+		)
 		return exitCode
 	end
 	def self.delete(
@@ -106,41 +106,73 @@ class Settings
 	end
 end
 
-class Application
-	attr_accessor :currentTab, :currentDetail
-	def initialize(
-			currentTab,
-			currentDetail
-		)
-		@currentTab 	= currentTab # a value of -1 means there are no tabs
-		@currentDetail 	= currentDetail
-	end
-	def self.load(
-			settings
-		)
-		application = Application.new(-1,settings.defaultDetail)
-		return application
-	end
-end
+# class Application
+# 	attr_accessor :currentTab, :currentDetail
+# 	def initialize(
+# 			currentTab,
+# 			currentDetail
+# 		)
+# 		@currentTab 	= currentTab # a value of -1 means there are no tabs
+# 		@currentDetail 	= currentDetail
+# 	end
+# 	def self.load(
+# 			settings
+# 		)
+# 		application = Application.new(-1,settings.defaultDetail)
+# 		return application
+# 	end
+# end
 
 class Tab
-	attr_reader :id, :connection
+	attr_reader :id, :connection, :channel
 	attr_accessor :name
 	@@tabId = 0
 	def initialize(
 			connection,
-			name
+			channel
 		)
 		@id 		= @@tabId
 		@connection = connection
-		@name 		= name
+		@channel 	= channel
 		@@tabId 	+= 1
 	end
 	def self.create(
-			connection,
-			name = -1
+			address,
+			port,
+			username,
+			modes,
+			realname,
+			nickname,
+			channel
 		)
-		tab = Tab.new(connection,name)
+		begin
+			s = TCPSocket.new("#{address}","#{port}")
+		rescue StandardError => e
+			p("Could not reach server")
+		end
+		begin
+			c_user(
+				s,
+				username,
+				modes,
+				realname
+			)
+			c_nick(
+				s,
+				nickname
+			)
+		rescue StandardError => e
+			p("Could not send connection details")
+		end
+		c_join(
+			s,
+			channel
+		)
+		name = "#{channel} #{address}:#{port}"
+		tab = Tab.new(s,channel)
 		return tab
+	end
+	def self.count
+		return @@tabId
 	end
 end

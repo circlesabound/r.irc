@@ -144,7 +144,19 @@ PROBLEM - I just found out that Shoes still has no support for a native applicat
 # 15/05
 Created two new classes - Tab and Application. The former stores information about a single tab, and is to be used as elements in an array that acts as all the tabs. The latter should only have one instance, and is to be used to store general information about the program instance, for example the currently selected tab and the currently selected option in the detail pane.
 
+# 23/05
+Rethought the status bar and the identity concept. Having identity profiles was one of the main points of the initial design concept, but it now seems that by strictly implementing this across the program would result in annoyances for the user. For example, nicknames may be in use for a certain server, and the user may be forced to create a new profile for just this instance - personal experience with the Rizon IRC network when my nickname remained in use (ghosted) when I disconnected and reconnected.
+
+TODO - I will need to think of a method to allow users to save their username, nickname, etc. without the strictness of the current identity profile implementation. For now, I need to scale back the integration of profiles throughout the program, limiting it to the initialisation of a connection.
+
 # I SHOULD PUT STUFF HERE
+
+# 01/07
+Rather bad roadblock encountered in the form of feature lack. The current version of Shoes, even the development version, does not have support for scroll bars for internal slots. As per the problems this causes, I have decided to revamp the tab system into a multi-window system - as well as mostly solving the problem of a lack of internal scroll bars, this is much easier to work with and manage.
+
+PROBLEM - Having no scrollbars available for internal slots would be detrimental to the tabbed interface as it featured the input box as being separate from the history pane. This meant that the amount of chat history available would be limited by the screen real estate provided to the window - there would be no ability to scroll up to view previous messages
+
+TODO - Draw up sketches and establish an idea of the general program control flow for the windowed system.
 
 # 07/07
 Made substantial progress in comparison to the past few sessions.

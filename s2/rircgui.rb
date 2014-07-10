@@ -7,7 +7,7 @@ require_relative '../common/methods_io.rb'
 require_relative '../common/methods_irc.rb'
 require_relative '../common/methods_rirc.rb'
 
-s = TCPSocket.new "irc.rizon.net","6667"
+# s = TCPSocket.new "irc.rizon.net","6667"
 
 b_startup
 
@@ -17,28 +17,33 @@ for k in 0..Profile.count-1
 	end
 end
 
-s.puts "NICK #{$profiles[currentProfile].nickname}"
-s.puts "USER #{$profiles[currentProfile].username} 0 * :#{$profiles[currentProfile].realname}"
+channelArray = []
+channelArray << "\#nsbhs"
 
-s.puts "JOIN \#nsbhs"
+ta = Tab.create(
+	"irc.rizon.net",
+	"6667",
+	$profiles[currentProfile].username,
+	0,
+	$profiles[currentProfile].realname,
+	$profiles[currentProfile].nickname,
+	channelArray
+)
+
+s = ta.connection
 
 messages = []
 b_threads = []
-# queue = Queue.new
 
 b_threads << receive = Thread.new do
 	while incoming = s.gets
-		# messages << incoming
 		b_addToHistory(messages,incoming)
-		# queue << incoming
 	end
 end
 
 b_threads << send = Thread.new do
 	while outgoing = gets
-		# messages << outgoing
 		b_addToHistory(messages,outgoing)
-		# queue << outgoing
 	end
 end
 
@@ -70,6 +75,8 @@ b_threads << gui = Thread.new do
 
 				# the following block would seem more efficient
 				# but has a freezing side effect
+				# if you want switch to this, you'll need
+				# to implement the queue stack again
 
 				# @messagebox.append do
 				# 	para "#{queue.pop}"
@@ -78,7 +85,7 @@ b_threads << gui = Thread.new do
 				####################
 			end
 		end
-		g_statusBar
+		g_statusBar(ta.id)
 	end
 	c_part(s,"\#nsbhs","bye")
 	send.kill
