@@ -54,25 +54,22 @@ b_threads << gui = Thread.new do
 			height: WINDOW_HEIGHT
 		) do
 		@flow = flow do
-			@messagebox = stack :height => 600, :scroll =>true do
+			@messagebox = stack :height => 600 do
 				# g_para("test")
 			end
 			every 0.5 do
-				
 				######################
-
 				# the following block is inefficient
 				# it redraws all the contents of @messagebox every time
-
+				
 				@messagebox.clear
 				messages.each do |m|
 					@messagebox.append do
 						g_para("#{m}")
 					end
+					# @messagebox.text << "#{m}\n"
 				end
-
 				######################
-
 				# the following block would seem more efficient
 				# but has a freezing side effect
 				# if you want switch to this, you'll need
@@ -81,7 +78,6 @@ b_threads << gui = Thread.new do
 				# @messagebox.append do
 				# 	para "#{queue.pop}"
 				# end
-
 				####################
 			end
 		end

@@ -148,7 +148,7 @@ class Tab
 		begin
 			s = TCPSocket.new("#{address}","#{port}")
 		rescue StandardError => e
-			p("Could not reach server")
+			p("Could not reach server: #{e}")
 		end
 		begin
 			c_user(
@@ -162,7 +162,7 @@ class Tab
 				nickname
 			)
 		rescue StandardError => e
-			p("Could not send connection details")
+			p("Could not send connection details: #{e}")
 		end
 		c_join(
 			s,

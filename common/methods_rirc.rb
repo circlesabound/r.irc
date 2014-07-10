@@ -8,12 +8,12 @@ def b_startup
 	begin
 		$profiles = Profile.load("../common/profilesFile")
 	rescue ReadError => e
-		p "Could not read profilesFile: "
+		p "Could not read profilesFile: #{e}"
 	end
 	begin
 		$settings = Settings.load("../common/settingsFile")
 	rescue ReadError => e
-		p "Could not read settingsFile"
+		p "Could not read settingsFile: #{e}"
 	end
 	# for i in 0..Profile.count-1
 	# 	if Integer(profiles[i].profileID) == settings.defaultProfile
