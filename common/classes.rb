@@ -125,7 +125,7 @@ end
 
 class Tab
 	attr_reader :id, :connection, :channel
-	attr_accessor :name
+	attr_accessor :threads, :messages, :queue, :window
 	@@tabId = 0
 	def initialize(
 			connection,
@@ -134,6 +134,19 @@ class Tab
 		@id 		= @@tabId
 		@connection = connection
 		@channel 	= channel
+		@threads	= Hash.new
+		# three threads in this hash
+		# 'r' => receive thread
+		# 's' => send thread
+		# 'g' => gui thread
+		@messages	= []
+		@queue		= Queue.new
+		# queue is for outgoing messages,
+		# a nice way for cross thread data sharing
+		@window		= Hash.new
+		# need a way to store the gui elements
+		# for manipulation by functions called
+		# by the back end
 		@@tabId 	+= 1
 	end
 	def self.create(
@@ -168,7 +181,6 @@ class Tab
 			s,
 			channel
 		)
-		name = "#{channel} #{address}:#{port}"
 		tab = Tab.new(s,channel)
 		return tab
 	end
