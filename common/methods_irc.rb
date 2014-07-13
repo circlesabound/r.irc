@@ -1,12 +1,12 @@
 # methods_irc.rb
 # all irc commands
 
-def c_admin(s,server)
+def c_admin(s,server="")
 	# Instructs the server to return information about the administrator of the server, or the current server if none specified
 	s.puts "ADMIN #{server}"
 end
 
-def c_away(s,message)
+def c_away(s,message="")
 	# Provides the server with a message to automatically send in reply to a PRIVMSG directed at the user, but not to a channel they are on. If <message> is omitted, the away status is removed.
 	s.puts "AWAY #{message}"
 end

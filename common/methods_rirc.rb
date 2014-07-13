@@ -1,5 +1,29 @@
 ##################################################################################
 ##                                                                              ##
+##     TEST METHODS                                                             ##
+##                                                                              ##
+##################################################################################
+
+def putToConsole(
+		str
+	)
+	puts str
+end
+
+def getFromConsole
+	return gets.chomp
+end
+
+def sendFromConsole(
+		id
+	)
+	str = getFromConsole
+	$tabs[id].queue << str
+end
+
+
+##################################################################################
+##                                                                              ##
 ##     BACK END METHODS                                                         ##
 ##                                                                              ##
 ##################################################################################
@@ -48,6 +72,7 @@ def b_addToHistory(
 	else
 		messageArray << newLine
 	end
+	putToConsole(newLine)
 end
 
 def b_newTab(
@@ -65,6 +90,75 @@ def b_newTab(
 			b_addToHistory($tabs[ta.id].messages,outgoing)
 			# need to actually send the message !!
 		end
+	end
+	g_newTab(ta.id)
+end
+
+def b_send(
+		id,
+		str
+	)
+	s = $tabs[id].connection
+	if b_checkIfIrcCommand(str)
+		str = str[1..str.length]
+		b_executeIrcCommand(id,str)
+	elsif b_checkIfEscapedMessage(str)
+		str = str[1..str.length]
+		c_privmsg(s,$tabs[id].channel,str)
+	else
+		c_privmsg(s,$tabs[id].channel,str)
+	end
+
+end
+
+def b_checkIfIrcCommand(
+		str
+	)
+	isCommand = false
+	if str.length >= 2
+		if str[0]=="/" && str[1]!="/"
+			isCommand = true
+		end
+	end
+	return isCommand
+end
+
+def b_checkIfEscapedMessage(
+		str
+	)
+	isEscapedMessage = false
+	if str.length >= 2
+		if str[0]=="/" && str[1]=="/"
+			isEscapedMessage = true
+		end
+	end
+	return isEscapedMessage
+end
+
+# def b_executeIrcCommand_cli(
+# 		id,
+# 		command
+# 	)
+# 	s = $tabs[id].connection
+# 	s.puts commmand
+# end
+
+def b_executeIrcCommand(
+#def b_executeIrcCommand_gui(
+		id,
+		rawCommand
+	)
+	s = $tabs[id].connection
+	command = rawCommand.split(%r{\s+},2)
+	# separate the command portion from the arguments
+	case command[0].upcase
+	when "admin"
+		c_admin(s,command[1])
+	when "away"
+		(command[1].nil?)? c_away(s) : c_away(s,command[1])
+	# should add the rest of them in
+	else
+		s.puts command
 	end
 end
 
@@ -230,9 +324,9 @@ def g_newTabDialog
 				b_newTab(
 					ta
 				)
-				g_newTab(
-					ta.id
-				)
+				# g_newTab(
+				# 	ta.id
+				# )
 				dialog.close
 			end
 		end
@@ -264,8 +358,8 @@ def g_newTab(
 			$tabs[id].window['statusbar'] = g_statusBar(id)
 		end
 	end
-	$tabs[id].threads.each do |key,thr|
-		thr.join
-		# $tabs[id].threads['g'].join
-	end
+	# $tabs[id].threads.each do |key,thr|
+	# 	thr.join
+	# 	# $tabs[id].threads['g'].join
+	# end
 end

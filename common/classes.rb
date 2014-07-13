@@ -126,28 +126,28 @@ end
 class Tab
 	attr_reader :id, :connection, :channel
 	attr_accessor :threads, :messages, :queue, :window
-	@@tabId = 0
+	@@tabID = 0
 	def initialize(
 			connection,
 			channel
 		)
-		@id 		= @@tabId
+		@id 		= @@tabID
 		@connection = connection
 		@channel 	= channel
 		@threads	= Hash.new
-		# three threads in this hash
+		# three threads per tab
 		# 'r' => receive thread
 		# 's' => send thread
 		# 'g' => gui thread
 		@messages	= []
 		@queue		= Queue.new
 		# queue is for outgoing messages,
-		# a nice way for cross thread data sharing
+		# enables cross thread data sharing
 		@window		= Hash.new
-		# need a way to store the gui elements
+		# a way to store the gui elements
 		# for manipulation by functions called
 		# by the back end
-		@@tabId 	+= 1
+		@@tabID 	+= 1
 	end
 	def self.create(
 			address,
@@ -185,6 +185,6 @@ class Tab
 		return tab
 	end
 	def self.count
-		return @@tabId
+		return @@tabID
 	end
 end

@@ -16,3 +16,8 @@ b_startup
 # end
 
 g_mainWindow
+$tabs.each do |t|
+	t.threads.each do |key,thr|
+		thr.join
+	end
+end
