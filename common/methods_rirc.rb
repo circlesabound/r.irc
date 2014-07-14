@@ -88,7 +88,7 @@ def b_newTab(
 	$tabs[ta.id].threads['s'] = Thread.new do
 		while outgoing = $tabs[ta.id].queue.pop
 			b_addToHistory($tabs[ta.id].messages,outgoing)
-			# need to actually send the message !!
+			b_send(ta.id,outgoing)
 		end
 	end
 	g_newTab(ta.id)
@@ -152,13 +152,13 @@ def b_executeIrcCommand(
 	command = rawCommand.split(%r{\s+},2)
 	# separate the command portion from the arguments
 	case command[0].upcase
-	when "admin"
+	when "ADMIN"
 		c_admin(s,command[1])
-	when "away"
+	when "AWAY"
 		(command[1].nil?)? c_away(s) : c_away(s,command[1])
 	# should add the rest of them in
 	else
-		s.puts command
+		s.puts rawCommand
 	end
 end
 
@@ -358,8 +358,8 @@ def g_newTab(
 			$tabs[id].window['statusbar'] = g_statusBar(id)
 		end
 	end
-	# $tabs[id].threads.each do |key,thr|
-	# 	thr.join
-	# 	# $tabs[id].threads['g'].join
-	# end
+	$tabs[id].threads['g'].join
+	$tabs[id].threads.each do |key,thr|
+		thr.join
+	end
 end
