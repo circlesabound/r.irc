@@ -149,7 +149,11 @@ Rethought the status bar and the identity concept. Having identity profiles was 
 
 TODO - I will need to think of a method to allow users to save their username, nickname, etc. without the strictness of the current identity profile implementation. For now, I need to scale back the integration of profiles throughout the program, limiting it to the initialisation of a connection.
 
+# 04/06
+I have merged the GUI with the updated backend, so now r.IRC receives messages and outputs them in the graphical interface rather than in the terminal. Quite a strange problem emerged from this, however; I had devised two methods to implement cross-thread communication. The first was to clear the entire messagebox per every interval of time and then repopulate it with lines taken from a message array, which would be updated by the backend. This seemed extremely inefficient, and so the second method made use of a queue, a stack-like structure, to update the messagebox with new lines. However, using the second method resulted in an inability to interact with the graphical user interface UNLESS the messagebox was being updated, including scrolling.
+
 # I SHOULD PUT STUFF HERE
+# don't need to worry about 13/06 to 27/06 - trials were more important
 
 # 01/07
 Rather bad roadblock encountered in the form of feature lack. The current version of Shoes, even the development version, does not have support for scroll bars for internal slots. As per the problems this causes, I have decided to revamp the tab system into a multi-window system - as well as mostly solving the problem of a lack of internal scroll bars, this is much easier to work with and manage.
