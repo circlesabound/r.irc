@@ -21,6 +21,28 @@ def sendFromConsole(
 	$tabs[id].queue << str
 end
 
+def putIncomingToConsole(
+		str
+	)
+	begin
+		n = b_processIncoming(str)
+		if n[:prefix_host]
+			print n[:host] << " : "
+		elsif n[:prefix_user]
+			print n[:nick] << " : "
+		end
+		if n[:params]
+			print n[:params] << " "
+		end
+		if n[:trailing]
+			print n[:trailing]
+		end
+	rescue NoMethodError => e
+		print "! #{e}"
+	end
+	print "\n"
+end
+
 
 ##################################################################################
 ##                                                                              ##
@@ -72,7 +94,8 @@ def b_addToHistory(
 	else
 		messageArray << newLine
 	end
-	putToConsole(newLine)
+	# putToConsole(newLine)
+	putIncomingToConsole(newLine)
 end
 
 def b_newTab(
@@ -91,7 +114,7 @@ def b_newTab(
 			b_send(ta.id,outgoing)
 		end
 	end
-	g_newTab(ta.id)
+	# g_newTab(ta.id)
 end
 
 def b_send(
@@ -160,6 +183,30 @@ def b_executeIrcCommand(
 	else
 		s.puts rawCommand
 	end
+end
+
+def b_processIncoming(
+		message
+	)
+	# example raw message
+	# :nickname!username@hostname.net PRIVMSG #channel :test
+
+	# newMessage = Hash.new
+	# begin
+	# 	newMessage = message.match(/^(?<nick>.*)!(?<user>\S*) (?<waste>.*) :(?<content>.*)$/)
+	# rescue NoMethodError
+	# 	newMessage[:nick] = ""
+	# 	newMessage[:content] = message
+	# end
+	begin
+		# n = Hash.new
+		# n = message.match(/^(?<from>:.+) (?<command>.+) (?<to>.*) (?<content>:.+)/)
+		n = message.match(IRC_REGEX)
+	rescue NoMethodError => e
+		n =  nil
+	end
+	# return newMessage
+	return n
 end
 
 ##################################################################################
@@ -293,13 +340,13 @@ def g_mainWindow
 			height: 100
 		) do
 		button "new" do
-			@newtabdialog = g_newTabDialog
+			g_newTabDialog
 		end
 	end
 end
 
 def g_newTabDialog
-	dialog = window do
+	@newTabDialog = window do
 		stack do
 			serverLine = edit_line :text => "irc.rizon.net"
 			portLine = edit_line :text => "6667"
@@ -324,10 +371,10 @@ def g_newTabDialog
 				b_newTab(
 					ta
 				)
-				# g_newTab(
-				# 	ta.id
-				# )
-				dialog.close
+				@display = ::Swt::Widgets::Display.getCurrent
+				g_newTab(
+					ta.id
+				)
 			end
 		end
 	end
@@ -337,28 +384,31 @@ end
 def g_newTab(
 		id
 	)
-	$tabs[id].threads['g'] = Thread.new do
-		$tabs[id].window['window'] = Shoes.app(
-				width: WINDOW_WIDTH,
-				height: WINDOW_HEIGHT
-			) do
-			flow do
-				$tabs[id].window['messagebox'] = stack do
-					g_para("test")
-				end
-				every 0.5 do
-					$tabs[id].window['messagebox'].clear
-					$tabs[id].messages.each do |m|
-						$tabs[id].window['messagebox'].append do
-							g_para("#{m}")
+	# $tabs[id].threads['g'] = Thread.new do
+		@display.asyncExec do
+			# @newTabDialog.close
+			$tabs[id].window['window'] = Shoes.app(
+					width: WINDOW_WIDTH,
+					height: WINDOW_HEIGHT
+				) do
+				flow do
+					$tabs[id].window['messagebox'] = stack do
+						g_para("test")
+					end
+					every 0.5 do
+						$tabs[id].window['messagebox'].clear
+						$tabs[id].messages.each do |m|
+							$tabs[id].window['messagebox'].append do
+								g_para("#{m}")
+							end
 						end
 					end
 				end
+				$tabs[id].window['statusbar'] = g_statusBar(id)
 			end
-			$tabs[id].window['statusbar'] = g_statusBar(id)
 		end
-	end
-	$tabs[id].threads['g'].join
+	# end
+	# $tabs[id].threads['g'].join
 	$tabs[id].threads.each do |key,thr|
 		thr.join
 	end
