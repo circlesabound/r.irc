@@ -2,7 +2,7 @@
 
 
 # MISC
-VERSION = "v0.4a"
+VERSION = "v0.4b"
 IRC_REGEX = /
 	(?<param>[^\ :]+){0}
 	(?<trailing>[^\r\n]+){0}
@@ -22,8 +22,11 @@ IRC_REGEX = /
 /x
 # thanks to Michael Morin on About.com Ruby
 
+# MAIN MENU
+MENU_WIDTH = 300
+MENU_HEIGHT = 500
 
-# WINDOW
+# CHAT WINDOW
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 700
 

@@ -255,10 +255,10 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # channel modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[tabId].window['statusbar_cm'] = g_smallPara("Channel modes: +placeholder")
+				$tabs[tabId].window[:statusbar_cm] = g_smallPara("Channel modes: +placeholder")
 				every 5 do
-					$tabs[tabId].window['statusbar_cm'].text = "Channel modes: +"
-					$tabs[tabId].window['statusbar_cm'].text << "placeholder"
+					$tabs[tabId].window[:statusbar_cm].text = "Channel modes: +"
+					$tabs[tabId].window[:statusbar_cm].text << "placeholder"
 				end
 			end
 		end
@@ -266,10 +266,10 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # user modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[tabId].window['statusbar_um'] = g_smallPara("User modes: +placeholder")
+				$tabs[tabId].window[:statusbar_um] = g_smallPara("User modes: +placeholder")
 				every 5 do
-					$tabs[tabId].window['statusbar_um'].text = "User modes :+"
-					$tabs[tabId].window['statusbar_um'].text << "placeholder"
+					$tabs[tabId].window[:statusbar_um].text = "User modes :+"
+					$tabs[tabId].window[:statusbar_um].text << "placeholder"
 				end
 			end
 		end
@@ -277,9 +277,9 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # online/offline indicator container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[tabId].window['statusbar_network'] = g_smallPara("ONLINE","green")
-				# $tabs[tabId].window['statusbar_network'] = g_smallPara("OFFLINE","red")
-				# $tabs[tabId].window['statusbar_network'] = g_smallPara("UNKNOWN")
+				$tabs[tabId].window[:statusbar_con] = g_smallPara("ONLINE","green")
+				# $tabs[tabId].window[:statusbar_con] = g_smallPara("OFFLINE","red")
+				# $tabs[tabId].window[:statusbar_con] = g_smallPara("UNKNOWN")
 			end
 		end
 	end
@@ -333,83 +333,83 @@ end
 # 	end
 # end
 
-def g_mainWindow
-	Shoes.app(
-			title: "r.irc #{VERSION}",
-			width: 100,
-			height: 100
-		) do
-		button "new" do
-			g_newTabDialog
-		end
-	end
-end
+# def g_mainWindow
+# 	Shoes.app(
+# 			title: "r.irc #{VERSION}",
+# 			width: 100,
+# 			height: 100
+# 		) do
+# 		button "new" do
+# 			g_newTabDialog
+# 		end
+# 	end
+# end
 
-def g_newTabDialog
-	@newTabDialog = window do
-		stack do
-			serverLine = edit_line :text => "irc.rizon.net"
-			portLine = edit_line :text => "6667"
-			usernameLine = edit_line
-			modesLine = edit_line
-			realnameLine = edit_line
-			nicknameLine = edit_line
-			channelLine = edit_line
-			newTabConfirmButton = button "go" do
-				channelArray = []
-				channelArray << channelLine.text
-				ta = Tab.create(
-					serverLine.text,
-					portLine.text,
-					usernameLine.text,
-					modesLine.text,
-					realnameLine.text,
-					nicknameLine.text,
-					channelArray
-				)
-				# this makes the connection to the server
-				b_newTab(
-					ta
-				)
-				@display = ::Swt::Widgets::Display.getCurrent
-				g_newTab(
-					ta.id
-				)
-			end
-		end
-	end
-	# return dialog
-end
+# def g_newTabDialog
+# 	@newTabDialog = window do
+# 		stack do
+# 			serverLine = edit_line :text => "irc.rizon.net"
+# 			portLine = edit_line :text => "6667"
+# 			usernameLine = edit_line
+# 			modesLine = edit_line
+# 			realnameLine = edit_line
+# 			nicknameLine = edit_line
+# 			channelLine = edit_line
+# 			newTabConfirmButton = button "go" do
+# 				channelArray = []
+# 				channelArray << channelLine.text
+# 				ta = Tab.create(
+# 					serverLine.text,
+# 					portLine.text,
+# 					usernameLine.text,
+# 					modesLine.text,
+# 					realnameLine.text,
+# 					nicknameLine.text,
+# 					channelArray
+# 				)
+# 				# this makes the connection to the server
+# 				b_newTab(
+# 					ta
+# 				)
+# 				@display = ::Swt::Widgets::Display.getCurrent
+# 				g_newTab(
+# 					ta.id
+# 				)
+# 			end
+# 		end
+# 	end
+# 	# return dialog
+# end
 
-def g_newTab(
-		id
-	)
-	# $tabs[id].threads['g'] = Thread.new do
-		@display.asyncExec do
-			# @newTabDialog.close
-			$tabs[id].window['window'] = Shoes.app(
-					width: WINDOW_WIDTH,
-					height: WINDOW_HEIGHT
-				) do
-				flow do
-					$tabs[id].window['messagebox'] = stack do
-						g_para("test")
-					end
-					every 0.5 do
-						$tabs[id].window['messagebox'].clear
-						$tabs[id].messages.each do |m|
-							$tabs[id].window['messagebox'].append do
-								g_para("#{m}")
-							end
-						end
-					end
-				end
-				$tabs[id].window['statusbar'] = g_statusBar(id)
-			end
-		end
-	# end
-	# $tabs[id].threads['g'].join
-	$tabs[id].threads.each do |key,thr|
-		thr.join
-	end
-end
+# def g_newTab(
+# 		id
+# 	)
+# 	# $tabs[id].threads['g'] = Thread.new do
+# 		@display.asyncExec do
+# 			# @newTabDialog.close
+# 			$tabs[id].window[:window] = Shoes.app(
+# 					width: WINDOW_WIDTH,
+# 					height: WINDOW_HEIGHT
+# 				) do
+# 				flow do
+# 					$tabs[id].window[:messagebox] = stack do
+# 						g_para("test")
+# 					end
+# 					every 0.5 do
+# 						$tabs[id].window[:messagebox].clear
+# 						$tabs[id].messages.each do |m|
+# 							$tabs[id].window[:messagebox].append do
+# 								g_para("#{m}")
+# 							end
+# 						end
+# 					end
+# 				end
+# 				$tabs[id].window[:statusbar] = g_statusBar(id)
+# 			end
+# 		end
+# 	# end
+# 	# $tabs[id].threads['g'].join
+# 	$tabs[id].threads.each do |key,thr|
+# 		thr.join
+# 	end
+# end

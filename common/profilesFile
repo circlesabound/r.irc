@@ -13,7 +13,7 @@
 # [profile name]
 # [nickname]
 # [realname]
-# [username] {optional, value is '-1' if empty}
+# [username]
 #
 
 
@@ -35,7 +35,7 @@ username
 is
 another
 section
--1
+asdf
 
 2
 realProfile

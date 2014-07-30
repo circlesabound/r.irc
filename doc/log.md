@@ -166,3 +166,8 @@ TODO - Draw up sketches and establish an idea of the general program control flo
 Made substantial progress in comparison to the past few sessions.
 
 PROBLEM - I encountered a very strange error where the GUI would stop responding UNLESS a message was incoming i.e. would not respond to scrolling, text selection. I attributed this to my rather roundabout threading of the GUI and the background network I/O threads. I eventually found out that, due to the nature of Ruby's thread scheduler, priority was being given to other threads (not the GUI) when no messages were being received, and so I separated the drawing of the message box contents from the rest of the GUI and limited the maximum lines kept in history to ensure the smoothness of the GUI.
+
+# 18/07
+Had major success in packaging a test application into a Java executable. This means that, if such success is repeated for r.IRC, the only pre-requisite to running it is a Java runtime environment (jre7-openjdk).
+
+PROBLEM - The Shoes 4 app packager does not actually run through the application to be packaged; it simply converts it into Java executable code and packages it alongside all other files in the current directory into a Java executable. This caused a minor problem as I was referencing files outside those to be packaged, and so the program would not load these files. This was easily remedied by creating a symbolic link within the current directory to these files and updating 'require' and 'load' statements to point to the new locations.
