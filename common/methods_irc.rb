@@ -46,14 +46,14 @@ def c_ison(s,nicknames)
 	s.puts "ISON #{nicknameList}"
 end
 
-def c_join(s,channels,keys="")
+def c_join(s,channels,keys=[])
 	# Makes the client join the channels in the comma-separated list <channels>, specifying the passwords, if needed, in the comma-separated list <keys>. If the channel(s) do not exist then they will be created.
 	channelList,keysList = ""
 	channels.each do |c|
 		channelList << "#{c},"
 	end
 	channelList.chop!
-	unless keys == ""
+	unless keys == []
 		keys.each do |k|
 			keysList << "#{k},"
 		end
@@ -84,7 +84,7 @@ def c_list(s,channels="",server="")
 	channels.each do |c|
 		channelList << "#{c},"
 	end
-	channelList = channelList[0..channelList.length-2]
+	channelList.chop!
 	s.puts "LIST #{channelList} #{server}"
 end
 
@@ -105,7 +105,7 @@ def c_mode_user(s,nickname,flags_on=[],flags_off=[])
 		flagsList << "#{f}"
 	end
 	unless flagsList.length == 0
-		flagsList = flagsList[0..flagsList.length-2]
+		flagsList.chop!
 	end
 	s.puts "MODE #{nickname} #{flagsList}"
 end
@@ -121,7 +121,7 @@ def c_mode_channel(s,channel,flags_on=[],flags_off=[])
 		flagsList << "#{f}"
 	end
 	unless flagsList.length == 0
-		flagsList = flagsList[0..flagsList.length-2]
+		flagsList.chop!
 	end
 	s.puts "MODE #{channel} #{flagsList}"
 end
@@ -139,7 +139,7 @@ def c_names(s,channels="",server="")
 		channelList << "#{c},"
 	end
 	unless channelList.length == 0
-		channelList = channelList[0..channelList.length-2]
+		channelList.chop!
 	end
 	s.puts "NAMES #{channelList} #{server}"
 end
@@ -166,7 +166,7 @@ def c_part(s,channels,message)
 		channelList << "#{c},"
 	end
 	unless channelList.length == 0
-		channelList = channelList[0..channelList.length-2]
+		channelList.chop!
 	end
 end
 
@@ -279,7 +279,7 @@ def c_whowas(s,nicknames,count="",server="")
 		nicknameList "#{n},"
 	end
 	unless nicknameList.length == 0
-		nicknameList = nicknameList[0..nicknameList.length-2]
+		nicknameList.chop!
 	end
 	s.puts "WHOWAS #{nicknameList} #{count} #{server}"
 end

@@ -18,7 +18,7 @@ IRC_REGEX = /
 	(?<command>[0-9A-Z]+){0}
 	(?<params>(\g<param>\ ?)?){0}
 
-	^(\g<prefix>\ )?(\g<command>\ )?(\g<params>)?:(\g<trailing>)?(\r\n)?$
+	^(\g<prefix>\ )?(\g<command>\ )?(\g<params>)?:?(\g<trailing>)?(\r\n)?$
 /x
 # thanks to Michael Morin on About.com Ruby
 
@@ -44,4 +44,4 @@ FONT_TITLE = "DINPro 47px"
 # SETTINGS
 # should honestly migrate these to settingsFile
 FONT_SIZE = 9
-MAX_HISTORY = 500
+MAX_HISTORY = 45

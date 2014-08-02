@@ -88,33 +88,59 @@ def b_addToHistory(
 		messageArray,
 		newLine
 	)
-	if messageArray.count >= MAX_HISTORY
-		messageArray.shift
-		messageArray << newLine
-	else
-		messageArray << newLine
-	end
-	# putToConsole(newLine)
-	putIncomingToConsole(newLine)
+	message = b_processIncoming(newLine)
+	# if message[:trailing][0..3] == "PING"
+	# 	# autorespond to pings
+	# 	putToConsole("PING")
+	# 	b_pingResponse(message)
+	# elsif message[:command] == "PING"
+	# 	# autorespond to pings
+	# 	putToConsole("PING")
+	# 	b_pingResponse(message)
+	# else
+		if messageArray.count >= MAX_HISTORY
+			messageArray.shift
+		end
+		messageArray << message
+		puts newLine
+	# end
+
+	# putIncomingToConsole(newLine)
+	# @display.syncExec do
+	# 	# @messageBox.append do
+	# 	# 	para b_formatIncoming(newLine), :font=>"8px"
+	# 	# end
+	# 	@messageBox.clear
+	# 	messageArray.each do |m|
+	# 		@messageBox.append do
+	# 			para b_formatIncoming(m), :font=>"8px"
+	# 		end
+	# 	end
+	# end
 end
 
 def b_newTab(
-		ta
+		id
 	)
-	$tabs[ta.id] = ta
-	con = $tabs[ta.id].connection
-	$tabs[ta.id].threads['r'] = Thread.new do
-		while incoming = con.gets
-			b_addToHistory($tabs[ta.id].messages,incoming)
+	con = $tabs[id].connection
+	$tabs[id].threads['r'] = Thread.new do
+		while incoming = con.gets.chomp
+			b_addToHistory($tabs[id].messages,incoming)
 		end
 	end
-	$tabs[ta.id].threads['s'] = Thread.new do
-		while outgoing = $tabs[ta.id].queue.pop
-			b_addToHistory($tabs[ta.id].messages,outgoing)
-			b_send(ta.id,outgoing)
+	$tabs[id].threads['s'] = Thread.new do
+		while outgoing = $tabs[id].queue.pop
+			b_addToHistory($tabs[id].messages,outgoing)
+			b_send(id,outgoing)
 		end
 	end
-	# g_newTab(ta.id)
+	# g_newTab(id)
+end
+
+def b_pingResponse(
+		message
+	)
+	c_pong(message[:params],message[:trailing])
 end
 
 def b_send(
@@ -122,10 +148,10 @@ def b_send(
 		str
 	)
 	s = $tabs[id].connection
-	if b_checkIfIrcCommand(str)
+	if b_isIrcCommand(str)
 		str = str[1..str.length]
 		b_executeIrcCommand(id,str)
-	elsif b_checkIfEscapedMessage(str)
+	elsif b_isEscapedMessage(str)
 		str = str[1..str.length]
 		c_privmsg(s,$tabs[id].channel,str)
 	else
@@ -134,7 +160,7 @@ def b_send(
 
 end
 
-def b_checkIfIrcCommand(
+def b_isIrcCommand(
 		str
 	)
 	isCommand = false
@@ -146,7 +172,7 @@ def b_checkIfIrcCommand(
 	return isCommand
 end
 
-def b_checkIfEscapedMessage(
+def b_isEscapedMessage(
 		str
 	)
 	isEscapedMessage = false
@@ -178,7 +204,7 @@ def b_executeIrcCommand(
 	when "ADMIN"
 		c_admin(s,command[1])
 	when "AWAY"
-		(command[1].nil?)? c_away(s) : c_away(s,command[1])
+		(command[1].nil?) ? c_away(s) : c_away(s,command[1])
 	# should add the rest of them in
 	else
 		s.puts rawCommand
@@ -207,6 +233,28 @@ def b_processIncoming(
 	end
 	# return newMessage
 	return n
+end
+
+def b_formatIncoming(
+		n
+	)
+	s = ""
+	begin
+		if n[:prefix_host]
+			s << n[:host] << " : "
+		elsif n[:prefix_user]
+			s << n[:nick] << " : "
+		end
+		if n[:params]
+			s << n[:params] << " "
+		end
+		if n[:trailing]
+			s << n[:trailing]
+		end
+	rescue NoMethodError => e
+		s << "! #{e}"
+	end
+	return s
 end
 
 ##################################################################################
@@ -413,3 +461,180 @@ end
 # 		thr.join
 # 	end
 # end
+
+def g_makeChatContainer
+	def changeMeansCustom
+		# auto-select <custom> when changes are made
+		@makeChatEntry_profile.choose("<custom>")
+	end
+	@makeChatContainer = stack :width=>1.0, :height=>1.0 do
+		@makeChatTitleContainerPadding1 = flow :height=>50 do
+			# padding
+		end
+		@makeChatTitleContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH/10 do
+			# font declaration doesn't work
+			# it's using Arial or something
+			para "join irc channel", :align=>'center', :font=>FONT_TITLE
+			# title
+		end
+		@makeChatTitleContainerPadding2 = flow :height=>50 do
+			# padding
+		end
+		@makeChatEntryContainer = flow :height=>WINDOW_HEIGHT-2*(FONT_SIZE+50)-100, :margin=>5 do
+			@makeChatEntryLeftContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "server:"
+					end
+					@makeChatEntry_server = edit_line :margin_left=>10
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "port:"
+					end
+					@makeChatEntry_port = edit_line :margin_left=>10
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "channel:"
+					end
+					@makeChatEntry_channel = edit_line :margin_left=>10
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "password (optional):"
+					end
+					@makeChatEntry_password = edit_line :margin_left=>10
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "user modes:"
+					end
+					@makeChatEntry_um = edit_line :margin_left=>10
+				end
+			end
+			@makeChatEntryRightContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "profile:"
+					end
+					profileArray = Array.new
+					$profiles.each do |p|
+						profileArray << p.profileName
+					end
+					profileArray.unshift("<custom>")
+					@makeChatEntry_profile = list_box :items=>profileArray
+					@makeChatEntry_profile.change do
+						profileName = @makeChatEntry_profile.text
+						if profileName == "<custom>"
+							# do nothing
+						else
+							$profiles.each do |p|
+								if p.profileName == profileName
+									@makeChatEntry_username.text = p.username
+									@makeChatEntry_nickname.text = p.nickname
+									@makeChatEntry_realname.text = p.realname
+									@makeChatEntry_profile.choose(profileName)
+								end
+							end
+						end
+					end
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "username:"
+					end
+					@makeChatEntry_username = edit_line :margin_left=>10
+					@makeChatEntry_username.change do
+						changeMeansCustom
+					end
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "nickname:"
+					end
+					@makeChatEntry_nickname = edit_line :margin_left=>10
+					@makeChatEntry_nickname.change do
+						changeMeansCustom
+					end
+				end
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "realname:"
+					end
+					@makeChatEntry_realname = edit_line :margin_left=>10
+					@makeChatEntry_realname.change do
+						changeMeansCustom
+					end
+				end
+			end
+		end
+		@makeChatGoButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH-200 do
+			@makeChatGoButton = button "join", :height=>0.5, :width=>102 do
+				begin
+					@t = Tab.create(
+							@makeChatEntry_server.text,
+							@makeChatEntry_port.text,
+							@makeChatEntry_username.text,
+							@makeChatEntry_username.text,
+							@makeChatEntry_um.text,
+							@makeChatEntry_realname.text,
+							@makeChatEntry_channel.text,
+							@makeChatEntry_password.text
+						)
+				rescue StandardError => e
+					putToConsole("could not connect: #{e}")
+				end
+				$tabs << @t
+				@display = ::Swt::Widgets::Display.getCurrent
+				@messageBoxContainer.append do
+					@messageBox = stack :width=>1.0, :height=>1.0 do
+						# every 0.1 do
+						# 	# @messageBox.text = ""
+						# 	@messageBox.clear
+						# 	$tabs[@t.id].messages.each do |m|
+						# 		# @messageBox.text << m << "\n"
+						# 		@messageBox.append do
+						# 			para "#{m}\n"
+						# 		end
+						# 	end
+						# end
+						every 0.25 do
+							@messageBox.clear
+							$tabs[@t.id].messages.each do |m|
+								@messageBox.append do
+									para b_formatIncoming(m), :font=>"8px"
+								end
+							end
+						end
+					end
+				end
+				b_newTab(@t.id)
+				@makeChatContainer.clear
+				@chatContainer.displace(0,-WINDOW_HEIGHT)
+				@chatContainer.show
+			end
+		end
+	end
+end
+
+def g_chatContainer
+	@chatContainer = stack :width=>1.0, :height=>1.0, :hidden=>true do
+		# additional wrapper required to ensure
+		# that elements don't drop out randomly
+		stack :width=>1.0, :height=>1.0 do
+			@messageBoxContainer = flow :width=>1.0, :height=>WINDOW_HEIGHT-(FONT_SIZE+25) do
+				#
+			end
+			@inputBoxContainer = flow do
+				stack :width=>80, :margin=>2, :margin_top=>5 do
+					@inputBoxNickname = para "nickname"
+				end
+				stack :width=>12, :margin=>2, :margin_top=>5 do
+					para ">"
+				end
+				@inputBox = edit_line :width=>WINDOW_WIDTH-100
+			end
+		end
+	end
+end

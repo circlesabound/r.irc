@@ -107,83 +107,14 @@ end
 
 def g_newTab
 	Shoes.app(
-			title: "New Chat Window",
+			title: "r.IRC #{VERSION} - chat",
 			width: WINDOW_WIDTH,
 			height: WINDOW_HEIGHT
 		) do
 		# container to avoid resizing shenanigans
-		@newChatContainer = stack :width=>WINDOW_WIDTH, :height=>WINDOW_HEIGHT do
-			flow :height=>50 do
-				# padding
-			end
-			@newChatTitleContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH/10 do
-				# font declaration doesn't work
-				# it's using Arial or something
-				para "join irc channel", :align=>'center', :font=>FONT_TITLE
-				# title
-			end
-			flow :height=>50 do
-				# padding
-			end
-			@newChatEntryContainer = flow :height=>WINDOW_HEIGHT-2*(FONT_SIZE+50)-100, :margin=>5 do
-				@newChatEntryLeftContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "server:"
-						end
-						@newChatEntry_server = edit_line :margin_left=>10
-					end
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "port:"
-						end
-						@newChatEntry_port = edit_line :margin_left=>10
-					end
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "channel:"
-						end
-						@newChatEntry_channel = edit_line :margin_left=>10
-					end
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "password (optional):"
-						end
-						@newChatEntry_password = edit_line :margin_left=>10
-					end
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "user modes:"
-						end
-						@newChatEntry_um = edit_line :margin_left=>10
-					end
-				end
-				@newChatEntryRightContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "username:"
-						end
-						@newChatEntry_username = edit_line :margin_left=>10
-					end
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "nickname:"
-						end
-						@newChatEntry_nickname = edit_line :margin_left=>10
-					end
-					flow :height=>FONT_SIZE+20, :margin=>2 do
-						stack :width=>175, :margin_top=>2 do
-							para "realname:"
-						end
-						@newChatEntry_realname = edit_line :margin_left=>10
-					end
-				end
-			end
-			@newChatGoButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH-200 do
-				@newChatGoButton = button "join", :height=>0.5, :width=>102 do
-					@newChatContainer.hide
-				end
-			end
+		@chatWindowContainer = stack :width=>WINDOW_WIDTH, :height=>WINDOW_HEIGHT do
+			g_makeChatContainer
+			g_chatContainer
 		end
 	end
 end

@@ -30,12 +30,12 @@ class Profile
 				profilesFileLine[j] = f_getsLine(profilesFile)
 			end
 			userProfiles[i] = Profile.new(
-				profilesFileLine[0],
-				profilesFileLine[1],
-				profilesFileLine[2],
-				profilesFileLine[3],
-				profilesFileLine[4]
-			)
+					profilesFileLine[0],
+					profilesFileLine[1],
+					profilesFileLine[2],
+					profilesFileLine[3],
+					profilesFileLine[4]
+				)
 		end
 		return userProfiles
 	end
@@ -185,8 +185,8 @@ class Tab
 		# enables cross thread data sharing
 		@window		= Hash.new
 		# a way to store the gui elements
-		# for manipulation by functions called
-		# by the back end
+		# for manipulation by functions fomr
+		# the back end
 		@@tabID 	+= 1
 	end
 	def self.create(
@@ -197,32 +197,42 @@ class Tab
 			realname,
 			nickname,
 			channel,
-			key
+			key=""
 		)
 		begin
 			s = TCPSocket.new("#{address}","#{port}")
 		rescue StandardError => e
 			p("Could not reach server: #{e}")
 		end
+		sleep 1
 		begin
-			c_user(
-				s,
-				username,
-				modes,
-				realname
-			)
 			c_nick(
-				s,
-				nickname
-			)
+					s,
+					nickname
+				)
+			c_user(
+					s,
+					username,
+					modes,
+					realname
+				)
 		rescue StandardError => e
 			p("Could not send connection details: #{e}")
 		end
-		c_join(
-			s,
-			Array.new(1,channel),
-			Array.new(1,key)
-		)
+		sleep 2
+		if key == "" || key.strip.nil?
+			# empty key!
+			c_join(
+					s,
+					Array.new(1,channel)
+				)
+		else
+			c_join(
+					s,
+					Array.new(1,channel),
+					Array.new(1,key)
+				)
+		end
 		tab = Tab.new(s,channel)
 		return tab
 	end
