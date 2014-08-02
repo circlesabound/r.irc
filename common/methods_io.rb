@@ -35,12 +35,15 @@ def f_createCopy(
 	exitCode = 0
 	originalFile = File.new(originalFileName,"r")
 	copy = File.new(copyName,"w+")
-	while line = originalFile.gets().chomp
+	while line = originalFile.gets
 		begin
 			copy.print line
-		rescue Errno.EACCES
+		rescue Errno.EACCES => e
+			puts e
 			exitCode = 1
 		end
 	end
+	originalFile.close
+	copy.close
 	return exitCode
 end

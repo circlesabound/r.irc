@@ -52,12 +52,12 @@ def c_join(s,channels,keys="")
 	channels.each do |c|
 		channelList << "#{c},"
 	end
-	channelList = channelList[0..channelList.length-2]
+	channelList.chop!
 	unless keys == ""
 		keys.each do |k|
 			keysList << "#{k},"
 		end
-		keysList = keysList[0..keysList.length-2]
+		keysList.chop!
 	end
 	s.puts "JOIN #{channelList} #{keysList}"
 end

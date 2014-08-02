@@ -3,6 +3,9 @@
 class Profile
 	attr_accessor :profileID, :profileName, :nickname, :realname, :username
 	@@profileCount = 0
+	@@location = '../common/profilesFile'
+	@@locationB = '../common/profilesFile.bak'
+	@@locationT = '../common/profilesFile.tmp'
 	def initialize(
 			profileID,
 			profileName,
@@ -17,10 +20,8 @@ class Profile
 		@username 		= username
 		@@profileCount += 1
 	end
-	def self.load(
-			profilesFileName
-		)
-		profilesFile = File.new(profilesFileName,"r")
+	def self.load
+		profilesFile = File.new(@@location,"r")
 		profileCount = Integer(f_getsLine(profilesFile))
 		profilesFileLine = Array.new()
 		userProfiles = Array.new()
@@ -38,7 +39,7 @@ class Profile
 		end
 		return userProfiles
 	end
-	def self.create(
+	def self.add(
 			profileID,
 			profileName,
 			nickname,
@@ -46,23 +47,46 @@ class Profile
 			username
 		)
 		exitCode = 0
-		f_createCopy("profilesFile","profilesFile.temp")
-		# magic goes here once I've figured it out
-		Profile.new(
-			profileID,
-			profileName,
-			nickname,
-			realname,
-			username
-		)
+		begin
+			# back up current file
+			f_createCopy(@@location,@@locationB)
+			# create a temp file, which is to be worked on
+			f_createCopy(@@location,@@locationT)
+		rescue Errno.EACCES => e
+			puts e
+			exitCode = 1
+		end
+		if exitCode == 0
+			newProfilesFile = File.new(@@locationT,"a")
+			begin
+				newProfilesFile.print "\n\n"
+				newProfilesFile.print "#{profileID}\n"
+				newProfilesFile.print "#{profileName}\n"
+				newProfilesFile.print "#{nickname}\n"
+				newProfilesFile.print "#{realname}\n"
+				newProfilesFile.print "#{username}\n"
+			rescue Errno.EACCES => e
+				puts e
+				exitCode = 2
+			end
+			newProfilesFile.close
+			if exitCode == 0
+				begin
+					File.delete(@@location)
+					File.rename(@@locationT,@@location)
+				rescue SystemCallError => e
+					exitCode = 3
+				end
+			end
+		end
 		return exitCode
 	end
-	def self.delete(
+	def self.remove(
 			profileID
 		)
 		exitCode = 0
-		f_createCopy("profilesFile","profileFile.temp")
-		# delete all from profileID declaration to next profileID declaration
+		f_createCopy(@@location,@@locationT)
+		# remove all from profileID declaration to next profileID declaration
 		return exitCode
 	end
 	def self.modify(
@@ -84,25 +108,41 @@ class Profile
 	def self.count
 		return @@profileCount
 	end
+	# setLocation
+	# used when profilesFile is not in the
+	# default location
+	def self.setLocation(profilesFileName)
+		@@location = profilesFileName
+		@@locationB = @@location << '.bak'
+		@@locationT = @@location << '.tmp'
+	end
 end
 
 class Settings
-	attr_reader :defaultProfile, :defaultDetail
+	attr_reader :defaultProfile#, :defaultDetail
+	@@location = '../common/settingsFile'
+	@@locationB = '../common/settingsFile.bak'
+	@@locationT = '../common/settingsFile.tmp'
 	def initialize(
-			defaultProfile,
-			defaultDetail
+			defaultProfile#,
+			# defaultDetail
 		)
 		@defaultProfile = defaultProfile
-		@defaultDetail 	= defaultDetail
+		# @defaultDetail 	= defaultDetail
 	end
 	def self.load(
 			settingsFileName
 		)
 		settingsFile = File.new(settingsFileName,"r")
 		defaultProfile = Integer(f_getsLine(settingsFile))
-		defaultDetail = Integer(f_getsLine(settingsFile))
-		settings = Settings.new(defaultProfile,defaultDetail)
+		# defaultDetail = Integer(f_getsLine(settingsFile))
+		settings = Settings.new(defaultProfile)
 		return settings
+	end
+	def self.modify(
+			defaultProfile
+		)
+		#
 	end
 end
 
@@ -156,7 +196,8 @@ class Tab
 			modes,
 			realname,
 			nickname,
-			channel
+			channel,
+			key
 		)
 		begin
 			s = TCPSocket.new("#{address}","#{port}")
@@ -179,7 +220,8 @@ class Tab
 		end
 		c_join(
 			s,
-			channel
+			Array.new(1,channel),
+			Array.new(1,key)
 		)
 		tab = Tab.new(s,channel)
 		return tab

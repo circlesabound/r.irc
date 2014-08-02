@@ -52,7 +52,7 @@ end
 
 def b_startup
 	begin
-		$profiles = Profile.load("../common/profilesFile")
+		$profiles = Profile.load
 	rescue ReadError => e
 		p "Could not read profilesFile: #{e}"
 	end
