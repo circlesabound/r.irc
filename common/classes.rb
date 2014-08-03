@@ -173,7 +173,7 @@ end
 
 class Tab
 	attr_reader :id, :connection, :channel
-	attr_accessor :threads, :messages, :queue, :window
+	attr_accessor :threads, :messages, :queue, :window, :paused
 	@@tabID = 0
 	def initialize(
 			connection,
@@ -195,6 +195,7 @@ class Tab
 		# a way to store the gui elements
 		# for manipulation by functions fomr
 		# the back end
+		@paused		= false
 		@@tabID 	+= 1
 	end
 	def self.create(

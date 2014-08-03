@@ -171,3 +171,15 @@ PROBLEM - I encountered a very strange error where the GUI would stop responding
 Had major success in packaging a test application into a Java executable. This means that, if such success is repeated for r.IRC, the only pre-requisite to running it is a Java runtime environment (jre7-openjdk).
 
 PROBLEM - The Shoes 4 app packager does not actually run through the application to be packaged; it simply converts it into Java executable code and packages it alongside all other files in the current directory into a Java executable. This caused a minor problem as I was referencing files outside those to be packaged, and so the program would not load these files. This was easily remedied by creating a symbolic link within the current directory to these files and updating 'require' and 'load' statements to point to the new locations.
+
+# 24/07
+I have found a roundabout way to combat the error with the massive Java trace that was reported in Check 3. It turned out to be describing an illegal call to schedule a redraw of the GUI without being in sync with the GUI thread (since that is how Java handles its GUI). By including a bit of Java code inside my program, I can specify that a certain block of code is to be asynchronously executed, thus bypassing the scheduling errors. This is probably of limited use since I have already heavily implemented another method, but it is worth mentioning.
+
+TODO - I have completed approximately half of the complete rewrite of r.IRC to match the multi-window design; essential remaining components include several background processes such as auto-response to pings and the user input box.
+
+PROBLEM - With a status bar, I would have to have some way of sending and receiving SPECIFIC commands without the interference of the regular send and receive threads, since the only way to determine the details in the status bar is to query the server. This is also something to consider for the automatic ping-pong module.
+
+# 29/07
+With thanks to Michael Morin on About.com, I have devised a regular expression which can be used to analyse incoming raw IRC messages, including separating prefix, command, and parameters. Using this, I can now process messages to be displayed in a more aesthetically pleasing manner, stripping out unnecessary information such as user and host for the PRIVMSG command. More importantly, I can use this to isolate PING commands sent from the server, and thus create an automatic ping response module.
+
+TODO - Make the pingpong module

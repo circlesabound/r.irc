@@ -1,7 +1,8 @@
-Shoes.app(
-		height: 200,
-		width: 200
-	) do
-	edit_line
-	
+require 'thread'
+
+a = Thread.new do
+	gets
 end
+puts "#{a.status}"
+a.stop
+puts "#{a.status}"

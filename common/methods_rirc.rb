@@ -81,21 +81,32 @@ end
 def b_addToHistory(
 		messageArray,
 		newLine,
-		id
+		id,
+		direction
 	)
-	message = b_processIncoming(newLine)
-	if message[:command] == "PING"
-		# autorespond to pings
-		putToConsole("PING") # DEBUGGING
-		b_pingResponse(id,message)
-	else
+	if direction == 'i'
+		# incoming message, process it !
+		message = b_processIncoming(newLine)
+		if message[:command] == "PING"
+			# autorespond to pings
+			putToConsole("PING") # DEBUGGING
+			b_pingResponse(id,message)
+		else
+			if messageArray.count >= MAX_HISTORY
+				messageArray.shift
+			end
+			messageArray << message
+			puts newLine
+		end
+	elsif direction == 'o'
+		# outgoing message, process it differently !
 		if messageArray.count >= MAX_HISTORY
 			messageArray.shift
 		end
-		messageArray << message
+		messageArray << newLine
 		puts newLine
 	end
-
+		
 	# putIncomingToConsole(newLine)
 	# @display.syncExec do
 	# 	# @messageBox.append do
@@ -115,13 +126,21 @@ def b_newTab(
 	)
 	con = $tabs[id].connection
 	$tabs[id].threads['r'] = Thread.new do
-		while incoming = con.gets.chomp
-			b_addToHistory($tabs[id].messages,incoming,id)
+		loop do
+			if $tabs[id].paused
+				Thread.stop
+			end
+			incoming = con.gets.chomp
+			b_addToHistory($tabs[id].messages,incoming,id,'i')
 		end
 	end
 	$tabs[id].threads['s'] = Thread.new do
-		while outgoing = $tabs[id].queue.pop
-			b_addToHistory($tabs[id].messages,outgoing,id)
+		loop do
+			if $tabs[id].paused
+				Thread.stop
+			end
+			outgoing = $tabs[id].queue.pop
+			b_addToHistory($tabs[id].messages,outgoing,id,'o')
 			b_send(id,outgoing)
 		end
 	end
@@ -234,13 +253,13 @@ def b_formatIncoming(
 	s = ""
 	begin
 		if n[:prefix_host]
-			s << "<#{n[:host]}> : "
+			s << "*#{n[:host]}* : "
 		elsif n[:prefix_user]
 			s << "<#{n[:nick]}> : "
 		end
-		if n[:params]
-			s << n[:params] << " "
-		end
+		# if n[:params]
+		# 	s << n[:params] << " "
+		# end
 		if n[:trailing]
 			s << n[:trailing]
 		end
@@ -249,6 +268,68 @@ def b_formatIncoming(
 		s << "! #{e}"
 	end
 	return s
+end
+
+def b_statusQuery_nick(
+		id
+	)
+	s = $tabs[id].connection
+	# pause b_threads
+	# we execute a bad command in order to get
+	# the server response
+	c_privmsg("","")
+	response = false
+	while response == false
+		incoming = s.gets.chomp
+		processed = b_processIncoming(incoming)
+		if processed[:trailing].match(/^PRIVMSG/) != nil
+			# found the correct server response
+			nick = processed[:params].strip
+			response = true
+		else
+			# incorrect response
+		end
+	end
+	# pause b_threads
+end
+
+def b_statusQuery_cm(
+		id
+	)
+	s = $tabs[id].connection
+	# pause b_threads
+	c_mode_channel(s,$tabs[id].channel)
+	# pause b_threads
+end
+
+def b_statusQuery_um(
+		id
+	)
+	# pause b_threads
+	c_mode_user()
+	# pause b_threads
+end
+
+def b_statusQuery_con(
+		id
+	)
+	online = false
+	# pause b_threads
+	# rubbish command to prompt server response
+	c_privmsg("","")
+	while response == false
+		incoming = s.gets.chomp
+		processed = b_processIncoming(incoming)
+		if processed[:trailing].match(/^PRIVMSG/) != nil
+			# found the correct server response
+			nick = processed[:params].strip
+			response = true
+		else
+			# incorrect response
+		end
+	end
+	response = false
+	# pause b_threads
 end
 
 ##################################################################################
@@ -283,7 +364,7 @@ def g_para(
 end
 
 def g_statusBar(
-		tabId
+		id
 	)
 	flow :width=>1.0, :height=>FONT_SIZE+10, :bottom=>0 do # status bar container
 		border silver, :strokewidth=>1
@@ -297,10 +378,10 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # channel modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[tabId].window[:statusbar_cm] = g_smallPara("Channel modes: +placeholder")
+				$tabs[id].window[:statusbar_cm] = g_smallPara("Channel modes: +placeholder")
 				every 5 do
-					$tabs[tabId].window[:statusbar_cm].text = "Channel modes: +"
-					$tabs[tabId].window[:statusbar_cm].text << "placeholder"
+					$tabs[id].window[:statusbar_cm].text = "Channel modes: +"
+					$tabs[id].window[:statusbar_cm].text << "placeholder"
 				end
 			end
 		end
@@ -308,10 +389,10 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # user modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[tabId].window[:statusbar_um] = g_smallPara("User modes: +placeholder")
+				$tabs[id].window[:statusbar_um] = g_smallPara("User modes: +placeholder")
 				every 5 do
-					$tabs[tabId].window[:statusbar_um].text = "User modes :+"
-					$tabs[tabId].window[:statusbar_um].text << "placeholder"
+					$tabs[id].window[:statusbar_um].text = "User modes :+"
+					$tabs[id].window[:statusbar_um].text << "placeholder"
 				end
 			end
 		end
@@ -319,9 +400,9 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # online/offline indicator container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[tabId].window[:statusbar_con] = g_smallPara("ONLINE","green")
-				# $tabs[tabId].window[:statusbar_con] = g_smallPara("OFFLINE","red")
-				# $tabs[tabId].window[:statusbar_con] = g_smallPara("UNKNOWN")
+				$tabs[id].window[:statusbar_con] = g_smallPara("ONLINE","green")
+				# $tabs[id].window[:statusbar_con] = g_smallPara("OFFLINE","red")
+				# $tabs[id].window[:statusbar_con] = g_smallPara("UNKNOWN")
 			end
 		end
 	end
@@ -582,7 +663,7 @@ def g_makeChatContainer
 				$tabs << @t
 				@display = ::Swt::Widgets::Display.getCurrent
 				@messageBoxContainer.append do
-					@messageBox = stack :width=>1.0, :height=>1.0 do
+					@messageBox = stack :width=>1.0, :height=>1.0, :margin=>4 do
 						# every 0.1 do
 						# 	# @messageBox.text = ""
 						# 	@messageBox.clear
@@ -593,7 +674,6 @@ def g_makeChatContainer
 						# 		end
 						# 	end
 						# end
-
 						every 0.5 do
 						# @display.asyncExec do
 							@messageBox.clear
@@ -622,10 +702,10 @@ def g_chatContainer
 		# additional wrapper required to ensure
 		# that elements don't drop out randomly
 		@innerChatContainer = stack :width=>1.0, :height=>1.0 do
-			@messageBoxContainer = flow :width=>1.0, :height=>WINDOW_HEIGHT-(FONT_SIZE+50) do
+			@messageBoxContainer = flow :width=>1.0, :height=>WINDOW_HEIGHT-(FONT_SIZE+50), :margin=>5 do
 				#
 			end
-			@inputBoxContainer = flow do
+			@inputBoxContainer = flow :margin=>10 do
 				stack :width=>80, :margin=>2, :margin_top=>5 do
 					@inputBoxNickname = para "nickname"
 				end
