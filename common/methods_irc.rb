@@ -257,7 +257,8 @@ end
 def c_who(s,name,flag_op=false)
 	# Returns a list of users who match <name>
 	# If flag 'o' is set, only information about operators is returned
-	s.puts (flag_op) ? "WHO #{name} o" : "WHO #{name}"
+	output = flag_op ? "WHO #{name} o" : "WHO #{name}"
+	s.puts output
 end
 
 def c_whois(s,server="",nicknames)
