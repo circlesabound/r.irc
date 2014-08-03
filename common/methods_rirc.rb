@@ -91,6 +91,9 @@ def b_addToHistory(
 			# autorespond to pings
 			putToConsole("PING") # DEBUGGING
 			b_pingResponse(id,message)
+		elsif message[:command] == "411"
+			# necessary to remove these
+			# roundable way to fix nick update bugs
 		else
 			if messageArray.count >= MAX_HISTORY
 				messageArray.shift
@@ -103,7 +106,19 @@ def b_addToHistory(
 		if messageArray.count >= MAX_HISTORY
 			messageArray.shift
 		end
-		messageArray << newLine
+		# PROBLEM !!!
+		# messageArray should only accept
+		# output from b_processIncoming or the like !!
+
+		# messageArray << newLine
+
+		# below is a bad, horrible, roundabout solution
+		# it's so bad it doesn't even work properly
+		newLine1 = Hash.new
+		newLine1[:trailing] = newLine
+		messageArray << newLine1
+		# pls do it better later
+
 		puts newLine
 	end
 		
@@ -273,50 +288,64 @@ end
 def b_statusQuery_nick(
 		id
 	)
+	nick = "nickname"
 	s = $tabs[id].connection
-	# pause b_threads
-	# we execute a bad command in order to get
-	# the server response
-	c_privmsg("","")
+	# $tabs[id].paused = true
 	response = false
 	while response == false
+		# we execute a bad command in order to get
+		# the server response
+		c_privmsg($tabs[id].connection,"","")
+		# don't ask me why there needs to be two
+		c_privmsg($tabs[id].connection,"","")
 		incoming = s.gets.chomp
+		puts "> #{incoming}"
 		processed = b_processIncoming(incoming)
-		if processed[:trailing].match(/^PRIVMSG/) != nil
+		# if processed[:trailing].match(/^PRIVMSG/) != nil
+		if processed[:trailing].match(/\(PRIVMSG\)/) != nil
 			# found the correct server response
 			nick = processed[:params].strip
+			puts "> #{nick}"
 			response = true
 		else
 			# incorrect response
+			puts "> bad"
 		end
 	end
-	# pause b_threads
+	# $tabs[id].paused = false
+	# $tabs[id].threads['s'].run
+	# $tabs[id].threads['r'].run
+	return nick
 end
 
 def b_statusQuery_cm(
 		id
 	)
 	s = $tabs[id].connection
-	# pause b_threads
+	$tabs[id].paused = true
 	c_mode_channel(s,$tabs[id].channel)
-	# pause b_threads
+	$tabs[id].paused = false
+	$tabs[id].threads['s'].run
+	$tabs[id].threads['r'].run
 end
 
 def b_statusQuery_um(
 		id
 	)
-	# pause b_threads
+	$tabs[id].paused = true
 	c_mode_user()
-	# pause b_threads
+	$tabs[id].paused = false
+	$tabs[id].threads['s'].run
+	$tabs[id].threads['r'].run
 end
 
 def b_statusQuery_con(
 		id
 	)
 	online = false
-	# pause b_threads
+	$tabs[id].paused = true
 	# rubbish command to prompt server response
-	c_privmsg("","")
+	c_privmsg($tabs[id].connection,"","")
 	while response == false
 		incoming = s.gets.chomp
 		processed = b_processIncoming(incoming)
@@ -329,7 +358,9 @@ def b_statusQuery_con(
 		end
 	end
 	response = false
-	# pause b_threads
+	$tabs[id].paused = false
+	$tabs[id].threads['s'].run
+	$tabs[id].threads['r'].run
 end
 
 ##################################################################################
@@ -679,13 +710,29 @@ def g_makeChatContainer
 							@messageBox.clear
 							$tabs[@t.id].messages.each do |m|
 								@messageBox.append do
-									para b_formatIncoming(m), :font=>"#{MESSAGE_FONT_SIZE}px"
+									para "#{b_formatIncoming(m)}", :font=>"#{MESSAGE_FONT_SIZE}px"
 								end
 							end
 						end
 					end
 				end
 				@innerChatContainer.append do
+					@inputBoxContainer = flow :margin=>10 do
+						stack :width=>80, :margin=>2, :margin_top=>5 do
+							@inputBoxNickname = para "nickname"
+							every 5 do
+								@inputBoxNickname.text = "#{b_statusQuery_nick(@t.id)}"
+							end
+						end
+						stack :width=>12, :margin=>2, :margin_top=>5 do
+							para ">"
+						end
+						@inputBox = edit_line :width=>WINDOW_WIDTH-175
+						@inputBoxSubmit = button "send" do
+							$tabs[@t.id].queue << @inputBox.text.chomp
+							@inputBox.text = ""
+						end
+					end
 					g_statusBar(@t.id)
 				end
 				b_newTab(@t.id)
@@ -704,19 +751,6 @@ def g_chatContainer
 		@innerChatContainer = stack :width=>1.0, :height=>1.0 do
 			@messageBoxContainer = flow :width=>1.0, :height=>WINDOW_HEIGHT-(FONT_SIZE+50), :margin=>5 do
 				#
-			end
-			@inputBoxContainer = flow :margin=>10 do
-				stack :width=>80, :margin=>2, :margin_top=>5 do
-					@inputBoxNickname = para "nickname"
-				end
-				stack :width=>12, :margin=>2, :margin_top=>5 do
-					para ">"
-				end
-				@inputBox = edit_line :width=>WINDOW_WIDTH-175
-				@inputBoxSubmit = button "send" do
-					$tabs[@t.id].queue << @inputBox.text
-					@inputBox.text = ""
-				end
 			end
 		end
 	end

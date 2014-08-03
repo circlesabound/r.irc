@@ -193,7 +193,7 @@ class Tab
 		# enables cross thread data sharing
 		@window		= Hash.new
 		# a way to store the gui elements
-		# for manipulation by functions fomr
+		# for manipulation by functions by
 		# the back end
 		@paused		= false
 		@@tabID 	+= 1
