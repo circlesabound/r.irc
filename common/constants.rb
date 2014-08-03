@@ -40,8 +40,11 @@ HELP_HEIGHT = 400
 
 # FONT
 FONT_TITLE = "DINPro 47px"
+FONT_SIZE = 9
 
 # SETTINGS
 # should honestly migrate these to settingsFile
-FONT_SIZE = 9
-MAX_HISTORY = 45
+MESSAGE_FONT_SIZE = 9
+# MAX_HISTORY scales inversely with MESSAGE_FONT_SIZE
+# MAX_HISTORY = (360/MESSAGE_FONT_SIZE).truncate
+MAX_HISTORY = 40

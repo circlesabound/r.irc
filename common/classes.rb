@@ -3,9 +3,9 @@
 class Profile
 	attr_accessor :profileID, :profileName, :nickname, :realname, :username
 	@@profileCount = 0
-	@@location = '../common/profilesFile'
-	@@locationB = '../common/profilesFile.bak'
-	@@locationT = '../common/profilesFile.tmp'
+	@@location = 'common/profilesFile'
+	@@locationB = 'common/profilesFile.bak'
+	@@locationT = 'common/profilesFile.tmp'
 	def initialize(
 			profileID,
 			profileName,
@@ -22,6 +22,8 @@ class Profile
 	end
 	def self.load
 		profilesFile = File.new(@@location,"r")
+		# skip the bracketed heading
+		f_getsLine(profilesFile)
 		profileCount = Integer(f_getsLine(profilesFile))
 		profilesFileLine = Array.new()
 		userProfiles = Array.new()
@@ -70,6 +72,8 @@ class Profile
 				exitCode = 2
 			end
 			newProfilesFile.close
+			# modify profile count
+			f_modifyProfileCount(@@locationT,@@profileCount+1)
 			if exitCode == 0
 				begin
 					File.delete(@@location)
@@ -119,28 +123,32 @@ class Profile
 end
 
 class Settings
-	attr_reader :defaultProfile#, :defaultDetail
-	@@location = '../common/settingsFile'
-	@@locationB = '../common/settingsFile.bak'
-	@@locationT = '../common/settingsFile.tmp'
+	# attr_reader :defaultProfile, :defaultDetail
+	attr_reader :messageFontSize, :maxMessageHistory
+	@@location = 'common/settingsFile'
+	@@locationB = 'common/settingsFile.bak'
+	@@locationT = 'common/settingsFile.tmp'
 	def initialize(
-			defaultProfile#,
+			# defaultProfile,
 			# defaultDetail
+			messageFontSize
 		)
-		@defaultProfile = defaultProfile
+		# @defaultProfile 	= defaultProfile
 		# @defaultDetail 	= defaultDetail
+		@messageFontSize	= messageFontSize
+		@maxMessageHistory	= Float(360/messageFontSize).truncate
 	end
-	def self.load(
-			settingsFileName
-		)
-		settingsFile = File.new(settingsFileName,"r")
-		defaultProfile = Integer(f_getsLine(settingsFile))
+	def self.load
+		settingsFile = File.new(@@location,"r")
+		# defaultProfile = Integer(f_getsLine(settingsFile))
 		# defaultDetail = Integer(f_getsLine(settingsFile))
-		settings = Settings.new(defaultProfile)
+		messageFontSize = Float(f_getsLine(settingsFile))
+		settings = Settings.new(messageFontSize)
 		return settings
 	end
 	def self.modify(
-			defaultProfile
+			# defaultProfile
+			messageFontSize
 		)
 		#
 	end

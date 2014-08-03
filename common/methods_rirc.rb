@@ -53,21 +53,15 @@ end
 def b_startup
 	begin
 		$profiles = Profile.load
-	rescue ReadError => e
+	rescue StandardError => e
 		p "Could not read profilesFile: #{e}"
 	end
 	begin
-		$settings = Settings.load("../common/settingsFile")
-	rescue ReadError => e
+		$settings = Settings.load
+	rescue StandardError => e
 		p "Could not read settingsFile: #{e}"
 	end
-	# for i in 0..Profile.count-1
-	# 	if Integer(profiles[i].profileID) == settings.defaultProfile
-	# 		$defaultProfile = i
-	# 	end
-	# end
 	$tabs = [] # init tab array
-	# $application = Application.load($settings)
 end
 
 # def b_newTab(
@@ -86,24 +80,21 @@ end
 
 def b_addToHistory(
 		messageArray,
-		newLine
+		newLine,
+		id
 	)
 	message = b_processIncoming(newLine)
-	# if message[:trailing][0..3] == "PING"
-	# 	# autorespond to pings
-	# 	putToConsole("PING")
-	# 	b_pingResponse(message)
-	# elsif message[:command] == "PING"
-	# 	# autorespond to pings
-	# 	putToConsole("PING")
-	# 	b_pingResponse(message)
-	# else
+	if message[:command] == "PING"
+		# autorespond to pings
+		putToConsole("PING") # DEBUGGING
+		b_pingResponse(id,message)
+	else
 		if messageArray.count >= MAX_HISTORY
 			messageArray.shift
 		end
 		messageArray << message
 		puts newLine
-	# end
+	end
 
 	# putIncomingToConsole(newLine)
 	# @display.syncExec do
@@ -125,12 +116,12 @@ def b_newTab(
 	con = $tabs[id].connection
 	$tabs[id].threads['r'] = Thread.new do
 		while incoming = con.gets.chomp
-			b_addToHistory($tabs[id].messages,incoming)
+			b_addToHistory($tabs[id].messages,incoming,id)
 		end
 	end
 	$tabs[id].threads['s'] = Thread.new do
 		while outgoing = $tabs[id].queue.pop
-			b_addToHistory($tabs[id].messages,outgoing)
+			b_addToHistory($tabs[id].messages,outgoing,id)
 			b_send(id,outgoing)
 		end
 	end
@@ -138,9 +129,11 @@ def b_newTab(
 end
 
 def b_pingResponse(
+		id,
 		message
 	)
-	c_pong(message[:params],message[:trailing])
+	putToConsole("PONG") # DEBUGGING
+	c_pong($tabs[id].connection,message[:trailing])
 end
 
 def b_send(
@@ -241,9 +234,9 @@ def b_formatIncoming(
 	s = ""
 	begin
 		if n[:prefix_host]
-			s << n[:host] << " : "
+			s << "<#{n[:host]}> : "
 		elsif n[:prefix_user]
-			s << n[:nick] << " : "
+			s << "<#{n[:nick]}> : "
 		end
 		if n[:params]
 			s << n[:params] << " "
@@ -251,6 +244,7 @@ def b_formatIncoming(
 		if n[:trailing]
 			s << n[:trailing]
 		end
+		s << ""
 	rescue NoMethodError => e
 		s << "! #{e}"
 	end
@@ -599,31 +593,36 @@ def g_makeChatContainer
 						# 		end
 						# 	end
 						# end
-						every 0.25 do
+
+						every 0.5 do
+						# @display.asyncExec do
 							@messageBox.clear
 							$tabs[@t.id].messages.each do |m|
 								@messageBox.append do
-									para b_formatIncoming(m), :font=>"8px"
+									para b_formatIncoming(m), :font=>"#{MESSAGE_FONT_SIZE}px"
 								end
 							end
 						end
 					end
 				end
+				@innerChatContainer.append do
+					g_statusBar(@t.id)
+				end
 				b_newTab(@t.id)
 				@makeChatContainer.clear
-				@chatContainer.displace(0,-WINDOW_HEIGHT)
-				@chatContainer.show
+				@outerChatContainer.displace(0,-WINDOW_HEIGHT)
+				@outerChatContainer.show
 			end
 		end
 	end
 end
 
 def g_chatContainer
-	@chatContainer = stack :width=>1.0, :height=>1.0, :hidden=>true do
+	@outerChatContainer = stack :width=>1.0, :height=>1.0, :hidden=>true do
 		# additional wrapper required to ensure
 		# that elements don't drop out randomly
-		stack :width=>1.0, :height=>1.0 do
-			@messageBoxContainer = flow :width=>1.0, :height=>WINDOW_HEIGHT-(FONT_SIZE+25) do
+		@innerChatContainer = stack :width=>1.0, :height=>1.0 do
+			@messageBoxContainer = flow :width=>1.0, :height=>WINDOW_HEIGHT-(FONT_SIZE+50) do
 				#
 			end
 			@inputBoxContainer = flow do
@@ -633,7 +632,11 @@ def g_chatContainer
 				stack :width=>12, :margin=>2, :margin_top=>5 do
 					para ">"
 				end
-				@inputBox = edit_line :width=>WINDOW_WIDTH-100
+				@inputBox = edit_line :width=>WINDOW_WIDTH-175
+				@inputBoxSubmit = button "send" do
+					$tabs[@t.id].queue << @inputBox.text
+					@inputBox.text = ""
+				end
 			end
 		end
 	end

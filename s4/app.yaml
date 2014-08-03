@@ -1,0 +1,21 @@
+# app.yaml
+
+# Full name of app
+name: rIRC
+
+# Short name
+shortname: rirc
+
+# Files to ignore when bundling
+ignore:
+    - 'vendor'
+    - 'lib'
+    - 'static'
+    - '*.app'
+    - 'spec'
+    - 'pkg'
+
+# How to run the app
+run: rircgui.rb
+
+version: 0.4b

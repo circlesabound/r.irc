@@ -176,6 +176,7 @@ end
 
 def c_pong(s,server1,server2="")
 	s.puts "PONG #{server1} #{server2}"
+	puts "PONG #{server1} #{server2}" # DEBUGGING
 end
 
 def c_privmsg(s,msgtarget,message)

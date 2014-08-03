@@ -20,7 +20,8 @@
 # NUMBER OF PROFILES
 # make sure this value is updated whenever
 # profilesFile is manually edited
-2
+[count]
+6
 
 ####### PROFILES START HERE #######
 
@@ -36,3 +37,30 @@ is
 another
 section
 asdf
+
+2
+profileName
+nick
+real
+user
+
+
+3
+name
+nick
+real
+user
+
+
+4
+name1
+nick1
+real1
+user1
+
+
+5
+ping tester
+ping me
+pingTester
+pingTester

@@ -32,18 +32,43 @@ def f_createCopy(
 		originalFileName,
 		copyName
 	)
-	exitCode = 0
-	originalFile = File.new(originalFileName,"r")
-	copy = File.new(copyName,"w+")
-	while line = originalFile.gets
-		begin
-			copy.print line
-		rescue Errno.EACCES => e
-			puts e
-			exitCode = 1
-		end
+	arr = f_loadFileIntoArray(originalFileName)
+	f_writeFileFromArray(copyName,arr)
+end
+
+def f_loadFileIntoArray(
+		fileName
+	)
+	arr = Array.new
+	f = File.new(fileName,"r")
+	while line = f.gets
+		arr << line.chomp
 	end
-	originalFile.close
-	copy.close
-	return exitCode
+	f.close
+	return arr
+end
+
+def f_modifyProfileCount(
+		fileName,
+		newCount
+	)
+	arr = f_loadFileIntoArray(fileName)
+	if arr.include?("[count]")
+		index = arr.index("[count]") + 1
+		arr[index] = String(newCount)
+		f_writeFileFromArray(fileName,arr)
+	else
+		# bad profilesFile !
+	end
+end
+
+def f_writeFileFromArray(
+		fileName,
+		arr
+	)
+	f = File.new(fileName,"w")
+	arr.each do |l|
+		f.print "#{l}\n"
+	end
+	f.close
 end

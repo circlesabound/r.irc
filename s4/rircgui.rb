@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'zip'
+# require 'zip'
 
 require 'socket'
 require 'thread'
