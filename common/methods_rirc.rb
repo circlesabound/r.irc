@@ -315,35 +315,73 @@ def b_statusQuery_nick(
 	# $tabs[id].paused = false
 	# $tabs[id].threads['s'].run
 	# $tabs[id].threads['r'].run
+	$tabs[id].nick = nick
 	return nick
 end
 
 def b_statusQuery_cm(
 		id
 	)
+	cm = "+"
 	s = $tabs[id].connection
-	$tabs[id].paused = true
-	c_mode_channel(s,$tabs[id].channel)
-	$tabs[id].paused = false
-	$tabs[id].threads['s'].run
-	$tabs[id].threads['r'].run
+	# $tabs[id].paused = true
+	response = false
+	while response == false
+		c_mode_channel(s,$tabs[id].channel)
+		# again i don't know why
+		c_mode_channel(s,$tabs[id].channel)
+		incoming = s.gets.chomp
+		processed = b_processIncoming(incoming)
+		# TODO: create the regex
+		if processed[:trailing].match(//) != nil
+			# TODO: create the regex
+			cm = processed[:params].match(//).strip
+			puts "> #{cm}"
+			response = true
+		else
+			puts "> bad"
+		end
+	end
+	# $tabs[id].paused = false
+	# $tabs[id].threads['s'].run
+	# $tabs[id].threads['r'].run
+	return cm
 end
 
 def b_statusQuery_um(
 		id
 	)
-	$tabs[id].paused = true
-	c_mode_user()
-	$tabs[id].paused = false
-	$tabs[id].threads['s'].run
-	$tabs[id].threads['r'].run
+	um = "+"
+	s = $tabs[id].connection
+	# $tabs[id].paused = true
+	response = false
+	while response == false
+		c_mode_user(s,$tabs[id].nick)
+		# again i don't know why
+		c_mode_user(s,$tabs[id].nick)
+		incoming = s.gets.chomp
+		processed = b_processIncoming(incoming)
+		# TODO: create the regex
+		if processed[:trailing].match(//) != nil
+			# TODO: create the regex
+			um = processed[:params].match(//).strip
+			puts "> #{um}"
+			response = true
+		else
+			puts "> bad"
+		end
+	end
+	# $tabs[id].paused = false
+	# $tabs[id].threads['s'].run
+	# $tabs[id].threads['r'].run
+	return um
 end
 
 def b_statusQuery_con(
 		id
 	)
 	online = false
-	$tabs[id].paused = true
+	# $tabs[id].paused = true
 	# rubbish command to prompt server response
 	c_privmsg($tabs[id].connection,"","")
 	while response == false
@@ -351,16 +389,17 @@ def b_statusQuery_con(
 		processed = b_processIncoming(incoming)
 		if processed[:trailing].match(/^PRIVMSG/) != nil
 			# found the correct server response
-			nick = processed[:params].strip
+			online = true
 			response = true
 		else
 			# incorrect response
 		end
 	end
-	response = false
-	$tabs[id].paused = false
-	$tabs[id].threads['s'].run
-	$tabs[id].threads['r'].run
+	# online = false
+	# $tabs[id].paused = false
+	# $tabs[id].threads['s'].run
+	# $tabs[id].threads['r'].run
+	return online
 end
 
 ##################################################################################
@@ -409,10 +448,10 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # channel modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[id].window[:statusbar_cm] = g_smallPara("Channel modes: +placeholder")
+				$tabs[id].window[:statusbar_cm] = g_smallPara("Channel modes: +")
 				every 5 do
 					$tabs[id].window[:statusbar_cm].text = "Channel modes: +"
-					$tabs[id].window[:statusbar_cm].text << "placeholder"
+					$tabs[id].window[:statusbar_cm].text << "#{b_statusQuery_cm(id)}"
 				end
 			end
 		end
@@ -420,10 +459,10 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # user modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[id].window[:statusbar_um] = g_smallPara("User modes: +placeholder")
+				$tabs[id].window[:statusbar_um] = g_smallPara("User modes: +")
 				every 5 do
 					$tabs[id].window[:statusbar_um].text = "User modes :+"
-					$tabs[id].window[:statusbar_um].text << "placeholder"
+					$tabs[id].window[:statusbar_um].text << "#{b_statusQuery_um(id)}"
 				end
 			end
 		end
@@ -431,9 +470,11 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # online/offline indicator container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[id].window[:statusbar_con] = g_smallPara("ONLINE","green")
-				# $tabs[id].window[:statusbar_con] = g_smallPara("OFFLINE","red")
-				# $tabs[id].window[:statusbar_con] = g_smallPara("UNKNOWN")
+				if b_statusQuery_con
+					$tabs[id].window[:statusbar_con] = g_smallPara("ONLINE","green")
+				else
+					$tabs[id].window[:statusbar_con] = g_smallPara("OFFLINE","red")
+				end
 			end
 		end
 	end
