@@ -335,7 +335,8 @@ def b_statusQuery_cm(
 		# TODO: create the regex
 		if processed[:trailing].match(//) != nil
 			# TODO: create the regex
-			cm = processed[:params].match(//).strip
+			# cm = processed[:params].match(//).strip
+			cm = "CM"
 			puts "> #{cm}"
 			response = true
 		else
@@ -364,7 +365,8 @@ def b_statusQuery_um(
 		# TODO: create the regex
 		if processed[:trailing].match(//) != nil
 			# TODO: create the regex
-			um = processed[:params].match(//).strip
+			# um = processed[:params].match(//).strip
+			um = "UM"
 			puts "> #{um}"
 			response = true
 		else
@@ -449,9 +451,15 @@ def g_statusBar(
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
 				$tabs[id].window[:statusbar_cm] = g_smallPara("Channel modes: +")
-				every 5 do
-					$tabs[id].window[:statusbar_cm].text = "Channel modes: +"
-					$tabs[id].window[:statusbar_cm].text << "#{b_statusQuery_cm(id)}"
+				$tabs[id].window[:statusbar_cm].text << "#{b_statusQuery_cm(id)}"
+				thread_cm = Thread.new do
+					@display.asyncExec do
+						every 23 do
+							# sleep(Random.rand(0...6))
+							$tabs[id].window[:statusbar_cm].text = "Channel modes: +"
+							$tabs[id].window[:statusbar_cm].text << "#{b_statusQuery_cm(id)}"
+						end
+					end
 				end
 			end
 		end
@@ -460,9 +468,15 @@ def g_statusBar(
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
 				$tabs[id].window[:statusbar_um] = g_smallPara("User modes: +")
-				every 5 do
-					$tabs[id].window[:statusbar_um].text = "User modes :+"
-					$tabs[id].window[:statusbar_um].text << "#{b_statusQuery_um(id)}"
+				$tabs[id].window[:statusbar_um].text << "#{b_statusQuery_um(id)}"
+				thread_um = Thread.new do
+					@display.asyncExec do
+						every 16 do
+							# sleep(Random.rand(0...6))
+							$tabs[id].window[:statusbar_um].text = "User modes :+"
+							$tabs[id].window[:statusbar_um].text << "#{b_statusQuery_um(id)}"
+						end
+					end
 				end
 			end
 		end
@@ -470,7 +484,8 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # online/offline indicator container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				if b_statusQuery_con
+				# if b_statusQuery_con
+				if true
 					$tabs[id].window[:statusbar_con] = g_smallPara("ONLINE","green")
 				else
 					$tabs[id].window[:statusbar_con] = g_smallPara("OFFLINE","red")
@@ -723,7 +738,7 @@ def g_makeChatContainer
 							@makeChatEntry_server.text,
 							@makeChatEntry_port.text,
 							@makeChatEntry_username.text,
-							@makeChatEntry_username.text,
+							@makeChatEntry_nickname.text,
 							@makeChatEntry_um.text,
 							@makeChatEntry_realname.text,
 							@makeChatEntry_channel.text,
@@ -760,9 +775,13 @@ def g_makeChatContainer
 				@innerChatContainer.append do
 					@inputBoxContainer = flow :margin=>10 do
 						stack :width=>80, :margin=>2, :margin_top=>5 do
-							@inputBoxNickname = para "nickname"
-							every 5 do
-								@inputBoxNickname.text = "#{b_statusQuery_nick(@t.id)}"
+							@inputBoxNickname = para "#{@makeChatEntry_nickname.text}"
+							thread_nick = Thread.new do
+								@display.asyncExec do
+									every 10 do
+										@inputBoxNickname.text = "#{b_statusQuery_nick(@t.id)}"
+									end
+								end
 							end
 						end
 						stack :width=>12, :margin=>2, :margin_top=>5 do

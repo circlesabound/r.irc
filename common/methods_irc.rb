@@ -100,7 +100,7 @@ def c_mode_user(s,nickname,flags_on=[],flags_off=[])
 	flags_on.each do |f|
 		flagsList << "#{f}"
 	end
-	flagsList << (flags_off.count == 0) ? "" : " -"
+	flagsList << ((flags_off.count == 0) ? "" : " -")
 	flags_off.each do |f|
 		flagsList << "#{f}"
 	end
@@ -116,7 +116,7 @@ def c_mode_channel(s,channel,flags_on=[],flags_off=[])
 	flags_on.each do |f|
 		flagsList << "#{f}"
 	end
-	flagsList << (flags_off.count == 0) ? "" : " -"
+	flagsList << ((flags_off.count == 0) ? "" : " -")
 	flags_off.each do |f|
 		flagsList << "#{f}"
 	end
