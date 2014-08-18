@@ -333,10 +333,10 @@ def b_statusQuery_cm(
 		incoming = s.gets.chomp
 		processed = b_processIncoming(incoming)
 		# TODO: create the regex
-		if processed[:trailing].match(//) != nil
+		if processed[:trailing].match(/\+[a-zA-Z]+$/) != nil
 			# TODO: create the regex
 			# cm = processed[:params].match(//).strip
-			cm = "CM"
+			cm = processed[:trailing].match(/(?<cm>\+[a-zA-Z]+){0}^\#.+ (\g<cm>)$/x)[:cm]
 			puts "> #{cm}"
 			response = true
 		else

@@ -13,7 +13,7 @@ IRC_REGEX = /
 
 	(?<prefix_host>\g<host>){0}
 	(?<prefix_user>\g<nick>(!\g<user>(@\g<host>))){0}
-	
+
 	(?<prefix>:(\g<prefix_user>|\g<prefix_host>)){0}
 	(?<command>[0-9A-Z]+){0}
 	(?<params>(\g<param>\ ?)?){0}
