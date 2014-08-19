@@ -146,10 +146,46 @@ class Settings
 		return settings
 	end
 	def self.modify(
-			# defaultProfile
 			messageFontSize
 		)
-		#
+		exitCode = 0
+		begin
+			# back up current file
+			f_createCopy(@@location,@@locationB)
+			# create a temp file, which is to be worked on
+			f_createCopy(@@location,@@locationT)
+		rescue Errno.EACCES => e
+			puts e
+			exitCode = 1
+		end
+		if exitCode == 0
+			begin
+				newSettingsFile = File.new(@@locationT,"w")
+				oldSettingsFile = File.new(@@locationB,"r")
+				while line = oldSettingsFile.gets
+					if f_isUselessLine(line)
+						newSettingsFile.print "#{line}"
+					else
+						newSettingsFile.print "#{messageFontSize}"
+					end
+				end
+				newSettingsFile.close
+				oldSettingsFile.close
+			rescue Errno.EACCES => e
+				puts e
+				exitCode = 2
+			end
+			if exitCode == 0
+				# successful operation
+				begin
+					File.delete(@@location)
+					File.rename(@@locationT,@@location)
+				rescue SystemCallError => e
+					exitCode = 3
+				end
+			end
+		end
+		return exitCode
 	end
 end
 

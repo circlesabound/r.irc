@@ -107,7 +107,7 @@ end
 
 def g_newTab
 	Shoes.app(
-			title: "r.IRC #{VERSION} - chat",
+			title: "r.IRC #{VERSION} - Chat",
 			width: WINDOW_WIDTH,
 			height: WINDOW_HEIGHT
 		) do
@@ -123,7 +123,7 @@ end
 
 def g_settings
 	Shoes.app(
-			title: "Settings",
+			title: "r.IRC #{VERSION} - Settings",
 			width: SETTINGS_WIDTH,
 			height: SETTINGS_HEIGHT
 		) do
@@ -135,7 +135,7 @@ def g_settings
 			@settingsTitleContainer = flow :height=>FONT_SIZE+50, :margin_left=>SETTINGS_WIDTH/10 do
 				# font declaration doesn't work
 				# it's using Arial or something
-				para "settings", :align=>'center', :font=>FONT_TITLE
+				para "Settings", :align=>'center', :font=>FONT_TITLE
 				# title
 			end
 			flow :height=>50 do
@@ -152,8 +152,9 @@ def g_settings
 			end
 			@settingsButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>SETTINGS_WIDTH-150 do
 				@settingsButton_save = button "Save", :height=>0.5, :width=>102 do
-					# save settings
+					Settings.modify(@settingsEntry_messageFontSize.text)
 					$settings = Settings.load
+					self.close
 				end
 				@settingsButton_cancel = button "Cancel", :height=>0.5, :width=>102 do
 					self.close
@@ -167,7 +168,7 @@ end
 
 def g_help
 	Shoes.app(
-			title: "Help",
+			title: "r.IRC #{VERSION} - Help",
 			width: HELP_WIDTH,
 			height: HELP_HEIGHT
 		) do
@@ -179,7 +180,7 @@ def g_help
 			@helpTitleContainer = flow :height=>FONT_SIZE+50, :margin_left=>HELP_WIDTH/10 do
 				# font declaration doesn't work
 				# it's using Arial or something
-				para "help", :align=>'center', :font=>FONT_TITLE
+				para "Help", :align=>'center', :font=>FONT_TITLE
 				# title
 			end
 			flow :height=>50 do

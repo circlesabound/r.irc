@@ -1,5 +1,6 @@
 # Font size of messages
-9
+10
+
 # Maximum num of lines in history
 # MAX_HISTORY scales inversely with MESSAGE_FONT_SIZE
 # MAX_HISTORY = (360/MESSAGE_FONT_SIZE).truncate

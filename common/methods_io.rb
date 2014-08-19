@@ -15,11 +15,24 @@
 def f_getsLine(
 		file
 	)
-	line = file.gets().chomp
-	while line.strip.nil? == true || line == "\n" || line[0] == '#' || line == ""
-		line = file.gets().chomp
+	line = file.gets.chomp
+	while f_isUselessLine(line)
+		line = file.gets.chomp
 	end
 	return line
+end
+
+def f_isUselessLine(
+		line
+	)
+	if line.strip.nil? == true 	||
+			line == "\n" 		||
+			line[0] == '#' 		||
+			line == ""
+		return true
+	else
+		return false
+	end
 end
 
 # f_createCopy
