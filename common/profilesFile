@@ -21,7 +21,7 @@
 # make sure this value is updated whenever
 # profilesFile is manually edited
 [count]
-10
+11
 
 ####### PROFILES START HERE #######
 
@@ -92,3 +92,10 @@ fdsa
 asdf
 fdsa
 asdf
+
+
+10
+My name is Sean
+seanbtbc
+sean
+iamsean

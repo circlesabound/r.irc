@@ -55,7 +55,7 @@ def g_menu
 						# padding
 					end
 					stack :width=>0.34, :height=>1.0 do
-						@newChatButton = button "new chat", :width=>1.0, :height=>1.0 do
+						@newChatButton = button "New chat", :width=>1.0, :height=>1.0 do
 							# new chat
 							g_newTab
 						end
@@ -72,7 +72,7 @@ def g_menu
 						# padding
 					end
 					stack :width=>0.34, :height=>1.0 do
-						@settingsButton = button "settings", :width=>1.0, :height=>1.0 do
+						@settingsButton = button "Settings", :width=>1.0, :height=>1.0 do
 							# settings
 							g_settings
 						end
@@ -89,7 +89,7 @@ def g_menu
 						# padding
 					end
 					stack :width=>0.20, :height=>1.0 do
-						@helpButton = button "help", :width=>1.0, :height=>1.0 do
+						@helpButton = button "Help", :width=>1.0, :height=>1.0 do
 							# help
 							g_help
 						end
@@ -144,7 +144,7 @@ def g_settings
 			@settingsContentContainer = flow :height=>FONT_SIZE+150, :margin_left=>SETTINGS_WIDTH/10 do
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "Font size (message box):"
+						para "Font size (chat messages):"
 					end
 					@settingsEntry_messageFontSize = edit_line :margin_left=>10
 					@settingsEntry_messageFontSize.text = "#{$settings.messageFontSize}"

@@ -150,9 +150,10 @@ def b_addToHistory(
 		# below is a bad, horrible, roundabout solution
 		# it's so bad it doesn't even work properly
 		newLine1 = Hash.new
+		newLine1[:prefix_user] = 1
+		newLine1[:nick] = $tabs[id].nick
 		newLine1[:trailing] = newLine
 		messageArray << newLine1
-		# pls do it better later
 
 		puts newLine
 	end
@@ -690,39 +691,41 @@ def g_makeChatContainer
 			@makeChatEntryLeftContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "server:"
+						para "Server URL:"
 					end
 					@makeChatEntry_server = edit_line :margin_left=>10
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "port:"
+						para "Port:"
 					end
 					@makeChatEntry_port = edit_line :margin_left=>10
+					@makeChatEntry_port.text = "6667"
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "channel:"
+						para "Channel name:"
 					end
 					@makeChatEntry_channel = edit_line :margin_left=>10
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "password (optional):"
+						para "Password (optional):"
 					end
 					@makeChatEntry_password = edit_line :margin_left=>10
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "user modes:"
+						para "User modes:"
 					end
 					@makeChatEntry_um = edit_line :margin_left=>10
+					@makeChatEntry_um.text = "0"
 				end
 			end
 			@makeChatEntryRightContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "profile:"
+						para "Profile:"
 					end
 					profileArray = Array.new
 					$profiles.each do |p|
@@ -748,7 +751,7 @@ def g_makeChatContainer
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "username:"
+						para "Username:"
 					end
 					@makeChatEntry_username = edit_line :margin_left=>10
 					@makeChatEntry_username.change do
@@ -757,7 +760,7 @@ def g_makeChatContainer
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "nickname:"
+						para "Nickname:"
 					end
 					@makeChatEntry_nickname = edit_line :margin_left=>10
 					@makeChatEntry_nickname.change do
@@ -766,7 +769,7 @@ def g_makeChatContainer
 				end
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
-						para "realname:"
+						para "Real name:"
 					end
 					@makeChatEntry_realname = edit_line :margin_left=>10
 					@makeChatEntry_realname.change do
@@ -794,7 +797,7 @@ def g_makeChatContainer
 			end
 		end
 		@makeChatButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH-190 do
-			@makeChatGoButton = button "join", :height=>0.5, :width=>102 do
+			@makeChatGoButton = button "Join", :height=>0.5, :width=>102 do
 				begin
 					@t = Tab.create(
 							@makeChatEntry_server.text,
