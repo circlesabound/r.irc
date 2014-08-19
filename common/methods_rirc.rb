@@ -91,11 +91,46 @@ def b_addToHistory(
 			# autorespond to pings
 			putToConsole("PING") # DEBUGGING
 			b_pingResponse(id,message)
+		# elsif message[:command] == "NICK"
+		# 	# nickname change
+		# 	message[:trailing] = "#{message[:prefix_user]} is now known as #{message[:trailing]}"
+		# 	message[:prefix_user] = ""
+		# 	message[:prefix_host] = ""
+		# 	if messageArray.count >= $settings.maxMessageHistory
+		# 		messageArray.shift
+		# 	end
+		# 	messageArray << message
+		# 	puts newLine
 		elsif message[:command] == "411"
-			# necessary to remove these
-			# roundable way to fix nick update bugs
+			# no recipient for privmsg
+			putToConsole("441")
+			putToConsole("#{message}")
+			b_statusQuery_nick(
+					id,
+					message
+				)
+		elsif message[:command] == "324"
+			# channel mode
+			putToConsole("324")
+			putToConsole("#{message}")
+			putToConsole("#{message[:trailing]}")
+			b_statusQuery_cm(
+					id,
+					message
+				)
+		elsif message[:command] == "329"
+			# channel creation timestamp in unix time
+			putToConsole("329")
+		elsif message[:command] == "221"
+			# user mode
+			putToConsole("221")
+			putToConsole("#{message}")
+			b_statusQuery_um(
+					id,
+					message
+				)
 		else
-			if messageArray.count >= MAX_HISTORY
+			if messageArray.count >= $settings.maxMessageHistory
 				messageArray.shift
 			end
 			messageArray << message
@@ -103,7 +138,7 @@ def b_addToHistory(
 		end
 	elsif direction == 'o'
 		# outgoing message, process it differently !
-		if messageArray.count >= MAX_HISTORY
+		if messageArray.count >= $settings.maxMessageHistory
 			messageArray.shift
 		end
 		# PROBLEM !!!
@@ -286,97 +321,98 @@ def b_formatIncoming(
 end
 
 def b_statusQuery_nick(
-		id
+		id,
+		message
 	)
-	nick = "nickname"
-	s = $tabs[id].connection
-	# $tabs[id].paused = true
-	response = false
-	while response == false
-		# we execute a bad command in order to get
-		# the server response
-		c_privmsg($tabs[id].connection,"","")
-		# don't ask me why there needs to be two
-		c_privmsg($tabs[id].connection,"","")
-		incoming = s.gets.chomp
-		puts "> #{incoming}"
-		processed = b_processIncoming(incoming)
+	# nick = "nickname"
+	# s = $tabs[id].connection
+	# # $tabs[id].paused = true
+	# response = false
+	# while response == false
+	# 	# we execute a bad command in order to get
+	# 	# the server response
+	# 	c_privmsg($tabs[id].connection,"","")
+	# 	# don't ask me why there needs to be two
+	# 	c_privmsg($tabs[id].connection,"","")
+	# 	incoming = s.gets.chomp
+	# 	puts "> #{incoming}"
+	# 	processed = b_processIncoming(incoming)
 		# if processed[:trailing].match(/^PRIVMSG/) != nil
-		if processed[:trailing].match(/\(PRIVMSG\)/) != nil
-			# found the correct server response
-			nick = processed[:params].strip
-			puts "> #{nick}"
-			response = true
-		else
-			# incorrect response
-			puts "> bad"
-		end
+	if message[:trailing].strip.match(/\(PRIVMSG\)/) != nil
+		# found the correct server response
+		nick = message[:params].strip
+		puts "> #{nick}"
+		response = true
+	else
+		# incorrect response
+		puts "> bad nick response"
 	end
+	# end
 	# $tabs[id].paused = false
 	# $tabs[id].threads['s'].run
 	# $tabs[id].threads['r'].run
 	$tabs[id].nick = nick
-	return nick
+	# return nick
 end
 
 def b_statusQuery_cm(
-		id
+		id,
+		message
 	)
-	cm = "+"
-	s = $tabs[id].connection
-	# $tabs[id].paused = true
-	response = false
-	while response == false
-		c_mode_channel(s,$tabs[id].channel)
-		# again i don't know why
-		c_mode_channel(s,$tabs[id].channel)
-		incoming = s.gets.chomp
-		processed = b_processIncoming(incoming)
-		# TODO: create the regex
-		if processed[:trailing].match(/\+[a-zA-Z]+$/) != nil
-			# TODO: create the regex
-			# cm = processed[:params].match(//).strip
-			cm = processed[:trailing].match(/(?<cm>\+[a-zA-Z]+){0}^\#.+ (\g<cm>)$/x)[:cm]
-			puts "> #{cm}"
-			response = true
-		else
-			puts "> bad"
-		end
+	# cm = ""
+	# # $tabs[id].paused = true
+	# response = false
+	# counter = 0
+	# c_mode_channel(s,$tabs[id].channel)
+	# # again i don't know why
+	# c_mode_channel(s,$tabs[id].channel)
+	# while response == false && counter < 10
+	# 	incoming = s.gets.chomp
+	# 	incoming = s.gets.chomp
+	# 	processed = b_processIncoming(incoming)
+	if message[:trailing].strip.match(/\+[a-zA-Z]+$/) != nil
+		# cm = processed[:params].match(//).strip
+		cm = message[:trailing].strip.match(/(?<cm>\+[a-zA-Z]+){0}^\#.+ (\g<cm>)$/x)[:cm]
+		puts "> #{cm}"
+		# response = true
+	else
+		puts "> bad cm response"
+		# counter += 1
 	end
+	# end
 	# $tabs[id].paused = false
 	# $tabs[id].threads['s'].run
 	# $tabs[id].threads['r'].run
-	return cm
+	# return cm
+	$tabs[id].cm = cm
 end
 
 def b_statusQuery_um(
-		id
+		id,
+		message
 	)
-	um = "+"
-	s = $tabs[id].connection
-	# $tabs[id].paused = true
-	response = false
-	while response == false
-		c_mode_user(s,$tabs[id].nick)
-		# again i don't know why
-		c_mode_user(s,$tabs[id].nick)
-		incoming = s.gets.chomp
-		processed = b_processIncoming(incoming)
-		# TODO: create the regex
-		if processed[:trailing].match(//) != nil
-			# TODO: create the regex
-			# um = processed[:params].match(//).strip
-			um = "UM"
-			puts "> #{um}"
-			response = true
-		else
-			puts "> bad"
-		end
+	# um = ""
+	# s = $tabs[id].connection
+	# # $tabs[id].paused = true
+	# response = false
+	# while response == false
+	# 	c_mode_user(s,$tabs[id].nick)
+	# 	# again i don't know why
+	# 	c_mode_user(s,$tabs[id].nick)
+	# 	incoming = s.gets.chomp
+	# 	processed = b_processIncoming(incoming)
+	if message[:trailing].strip.match(/^\+[a-zA-Z]+$/) != nil
+		um = message[:trailing].strip.match(/^\+[a-zA-Z]+$/)
+		puts "> #{um}"
+	else
+		puts "> bad um response"
 	end
+	# end
 	# $tabs[id].paused = false
 	# $tabs[id].threads['s'].run
 	# $tabs[id].threads['r'].run
-	return um
+	# return um
+	$tabs[id].um = um
 end
 
 def b_statusQuery_con(
@@ -450,14 +486,18 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # channel modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[id].window[:statusbar_cm] = g_smallPara("Channel modes: +")
-				$tabs[id].window[:statusbar_cm].text << "#{b_statusQuery_cm(id)}"
+				$tabs[id].window[:statusbar_cm] = g_smallPara("Channel modes: ")
+				# $tabs[id].window[:statusbar_cm].text << ""
 				thread_cm = Thread.new do
 					@display.asyncExec do
-						every 23 do
+						every 5 do
+							c_mode_channel(
+									$tabs[id].connection,
+									$tabs[id].channel
+								)
 							# sleep(Random.rand(0...6))
-							$tabs[id].window[:statusbar_cm].text = "Channel modes: +"
-							$tabs[id].window[:statusbar_cm].text << "#{b_statusQuery_cm(id)}"
+							$tabs[id].window[:statusbar_cm].text = "Channel modes: "
+							$tabs[id].window[:statusbar_cm].text << "#{$tabs[id].cm}"
 						end
 					end
 				end
@@ -467,14 +507,18 @@ def g_statusBar(
 		# stack :width=>0.25, :height=>1.0 do # user modes container
 			border silver, :strokewidth=>1
 			stack :width=>1.0, :height=>1.0, :margin=>2 do
-				$tabs[id].window[:statusbar_um] = g_smallPara("User modes: +")
-				$tabs[id].window[:statusbar_um].text << "#{b_statusQuery_um(id)}"
+				$tabs[id].window[:statusbar_um] = g_smallPara("User modes: ")
+				# $tabs[id].window[:statusbar_um].text << ""
 				thread_um = Thread.new do
 					@display.asyncExec do
-						every 16 do
+						every 5 do
 							# sleep(Random.rand(0...6))
-							$tabs[id].window[:statusbar_um].text = "User modes :+"
-							$tabs[id].window[:statusbar_um].text << "#{b_statusQuery_um(id)}"
+							c_mode_user(
+									$tabs[id].connection,
+									$tabs[id].nick
+								)
+							$tabs[id].window[:statusbar_um].text = "User modes: "
+							$tabs[id].window[:statusbar_um].text << "#{$tabs[id].um}"
 						end
 					end
 				end
@@ -636,13 +680,13 @@ def g_makeChatContainer
 		@makeChatTitleContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH/10 do
 			# font declaration doesn't work
 			# it's using Arial or something
-			para "join irc channel", :align=>'center', :font=>FONT_TITLE
+			para "Join IRC channel", :align=>'center', :font=>FONT_TITLE
 			# title
 		end
 		@makeChatTitleContainerPadding2 = flow :height=>50 do
 			# padding
 		end
-		@makeChatEntryContainer = flow :height=>WINDOW_HEIGHT-2*(FONT_SIZE+50)-100, :margin=>5 do
+		@makeChatEntryContainer = flow :height=>WINDOW_HEIGHT-2*(FONT_SIZE+50)-150, :margin=>5 do
 			@makeChatEntryLeftContainer = stack :width=>0.5, :margin_right=>5, :margin_left=>20 do
 				flow :height=>FONT_SIZE+20, :margin=>2 do
 					stack :width=>175, :margin_top=>2 do
@@ -729,18 +773,36 @@ def g_makeChatContainer
 						changeMeansCustom
 					end
 				end
+				flow :height=>FONT_SIZE+50, :margin=>2 do
+					@saveProfileButton = button "Save profile", :height=>0.5, :width=>102 do
+						profileName = ask("Name your profile:")
+						Profile.add(
+								Profile.count,
+								profileName,
+								@makeChatEntry_nickname.text,
+								@makeChatEntry_realname.text,
+								@makeChatEntry_username.text
+							)
+						$profiles = Profile.load
+						profileArray = Array.new
+						$profiles.each do |p|
+							profileArray << p.profileName
+						end
+						@makeChatEntry_profile.items = profileArray
+					end
+				end
 			end
 		end
-		@makeChatGoButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH-200 do
+		@makeChatButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>WINDOW_WIDTH-190 do
 			@makeChatGoButton = button "join", :height=>0.5, :width=>102 do
 				begin
 					@t = Tab.create(
 							@makeChatEntry_server.text,
 							@makeChatEntry_port.text,
 							@makeChatEntry_username.text,
-							@makeChatEntry_nickname.text,
 							@makeChatEntry_um.text,
 							@makeChatEntry_realname.text,
+							@makeChatEntry_nickname.text,
 							@makeChatEntry_channel.text,
 							@makeChatEntry_password.text
 						)
@@ -766,7 +828,7 @@ def g_makeChatContainer
 							@messageBox.clear
 							$tabs[@t.id].messages.each do |m|
 								@messageBox.append do
-									para "#{b_formatIncoming(m)}", :font=>"#{MESSAGE_FONT_SIZE}px"
+									para "#{b_formatIncoming(m)}", :font=>"#{$settings.messageFontSize}px"
 								end
 							end
 						end
@@ -778,8 +840,9 @@ def g_makeChatContainer
 							@inputBoxNickname = para "#{@makeChatEntry_nickname.text}"
 							thread_nick = Thread.new do
 								@display.asyncExec do
-									every 10 do
-										@inputBoxNickname.text = "#{b_statusQuery_nick(@t.id)}"
+									every 5 do
+										c_privmsg($tabs[@t.id].connection,"","")
+										@inputBoxNickname.text = "#{$tabs[@t.id].nick}"
 									end
 								end
 							end
@@ -799,6 +862,9 @@ def g_makeChatContainer
 				@makeChatContainer.clear
 				@outerChatContainer.displace(0,-WINDOW_HEIGHT)
 				@outerChatContainer.show
+			end
+			@makeChatCancelButton = button "Cancel", :height=>0.5, :width=>102 do
+				self.close
 			end
 		end
 	end

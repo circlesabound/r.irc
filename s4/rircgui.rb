@@ -141,7 +141,24 @@ def g_settings
 			flow :height=>50 do
 				# padding
 			end
-			#
+			@settingsContentContainer = flow :height=>FONT_SIZE+150, :margin_left=>SETTINGS_WIDTH/10 do
+				flow :height=>FONT_SIZE+20, :margin=>2 do
+					stack :width=>175, :margin_top=>2 do
+						para "Font size (message box):"
+					end
+					@settingsEntry_messageFontSize = edit_line :margin_left=>10
+					@settingsEntry_messageFontSize.text = "#{$settings.messageFontSize}"
+				end
+			end
+			@settingsButtonContainer = flow :height=>FONT_SIZE+50, :margin_left=>SETTINGS_WIDTH-150 do
+				@settingsButton_save = button "Save", :height=>0.5, :width=>102 do
+					# save settings
+					$settings = Settings.load
+				end
+				@settingsButton_cancel = button "Cancel", :height=>0.5, :width=>102 do
+					self.close
+				end
+			end
 		end
 	end
 end

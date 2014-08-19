@@ -21,7 +21,7 @@
 # make sure this value is updated whenever
 # profilesFile is manually edited
 [count]
-6
+9
 
 ####### PROFILES START HERE #######
 
@@ -61,6 +61,27 @@ user1
 
 5
 ping tester
-ping me
+pingme
 pingTester
 pingTester
+
+
+6
+another
+another
+another
+another
+
+
+7
+asdfasdfasdf
+nick
+real
+user
+
+
+8
+jfjfjf
+asdf
+asdf
+asdf

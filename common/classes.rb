@@ -89,7 +89,6 @@ class Profile
 			profileID
 		)
 		exitCode = 0
-		f_createCopy(@@location,@@locationT)
 		# remove all from profileID declaration to next profileID declaration
 		return exitCode
 	end
@@ -173,11 +172,12 @@ end
 
 class Tab
 	attr_reader :id, :connection, :channel
-	attr_accessor :threads, :messages, :queue, :window, :nick, :paused
+	attr_accessor :threads, :messages, :queue, :window, :nick, :cm, :um, :paused
 	@@tabID = 0
 	def initialize(
 			connection,
-			channel
+			channel,
+			nick
 		)
 		@id 		= @@tabID
 		@connection = connection
@@ -195,7 +195,9 @@ class Tab
 		# a way to store the gui elements
 		# for manipulation by functions by
 		# the back end
-		@nick 		= ""
+		@nick 		= "#{nick}"
+		@um 		= ""
+		@cm 		= ""
 		@paused		= false
 		@@tabID 	+= 1
 	end
@@ -243,7 +245,11 @@ class Tab
 					Array.new(1,key)
 				)
 		end
-		tab = Tab.new(s,channel)
+		tab = Tab.new(
+				s,
+				channel,
+				nickname
+			)
 		return tab
 	end
 	def self.count

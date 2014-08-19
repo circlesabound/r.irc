@@ -44,7 +44,7 @@ FONT_SIZE = 9
 
 # SETTINGS
 # should honestly migrate these to settingsFile
-MESSAGE_FONT_SIZE = 9
+# MESSAGE_FONT_SIZE = 9
 # MAX_HISTORY scales inversely with MESSAGE_FONT_SIZE
 # MAX_HISTORY = (360/MESSAGE_FONT_SIZE).truncate
-MAX_HISTORY = 40
+# MAX_HISTORY = 40
