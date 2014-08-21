@@ -779,19 +779,21 @@ def g_makeChatContainer
 				flow :height=>FONT_SIZE+50, :margin=>2 do
 					@saveProfileButton = button "Save profile", :height=>0.5, :width=>102 do
 						profileName = ask("Name your profile:")
-						Profile.add(
-								Profile.count,
-								profileName,
-								@makeChatEntry_nickname.text,
-								@makeChatEntry_realname.text,
-								@makeChatEntry_username.text
-							)
-						$profiles = Profile.load
-						profileArray = Array.new
-						$profiles.each do |p|
-							profileArray << p.profileName
-						end
-						@makeChatEntry_profile.items = profileArray
+						unless profileName.nil?
+                            Profile.add(
+						    		Profile.count,
+								    profileName,
+								    @makeChatEntry_nickname.text,
+								    @makeChatEntry_realname.text,
+								    @makeChatEntry_username.text
+							    )
+    						$profiles = Profile.load
+    						profileArray = Array.new
+    						$profiles.each do |p|
+    							profileArray << p.profileName
+    						end
+    						@makeChatEntry_profile.items = profileArray
+                        end
 					end
 				end
 			end
