@@ -166,7 +166,7 @@ class Settings
 					if f_isUselessLine(line)
 						newSettingsFile.print "#{line}"
 					else
-						newSettingsFile.print "#{messageFontSize}"
+						newSettingsFile.print "#{messageFontSize}\n"
 					end
 				end
 				newSettingsFile.close
