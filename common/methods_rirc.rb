@@ -854,7 +854,7 @@ def g_makeChatContainer
 							para ">"
 						end
 						@inputBox = edit_line :width=>WINDOW_WIDTH-175
-						@inputBoxSubmit = button "send" do
+						@inputBoxSubmit = button "Send" do
 							$tabs[@t.id].queue << @inputBox.text.chomp
 							@inputBox.text = ""
 						end
@@ -882,5 +882,77 @@ def g_chatContainer
 				#
 			end
 		end
+	end
+end
+
+def g_helpPage_1
+	@helpContent.clear
+	@helpContent.append do
+		para "Getting started", :font=>"18px", :margin=>3, :margin_bottom=>6
+		para "#{HELP_PAGE_1}", :margin=>3
+		helpButton_next = button "Next", :height=>30, :width=>102 do
+			g_helpPage_2
+		end
+		helpButton_next.move(HELP_WIDTH-175,HELP_HEIGHT-225)
+	end
+end
+
+def g_helpPage_2
+	@helpContent.clear
+	@helpContent.append do
+		para "Joining a channel - 1", :font=>"18px", :margin=>3, :margin_bottom=>6
+		para "#{HELP_PAGE_2}", :margin=>3
+		helpButton_previous = button "Previous", :height=>30, :width=>102 do
+			g_helpPage_1
+		end
+		helpButton_previous.move(73,HELP_HEIGHT-225)
+		helpButton_next = button "Next", :height=>30, :width=>102 do
+			g_helpPage_3
+		end
+		helpButton_next.move(HELP_WIDTH-175,HELP_HEIGHT-225)
+	end
+end
+
+def g_helpPage_3
+	@helpContent.clear
+	@helpContent.append do
+		para "Joining a channel - 2", :font=>"18px", :margin=>3, :margin_bottom=>6
+		para "#{HELP_PAGE_3}", :margin=>3
+		helpButton_previous = button "Previous", :height=>30, :width=>102 do
+			g_helpPage_2
+		end
+		helpButton_previous.move(73,HELP_HEIGHT-225)
+		helpButton_next = button "Next", :height=>30, :width=>102 do
+			g_helpPage_4
+		end
+		helpButton_next.move(HELP_WIDTH-175,HELP_HEIGHT-225)
+	end
+end
+
+def g_helpPage_4
+	@helpContent.clear
+	@helpContent.append do
+		para "Joining a channel - 3", :font=>"18px", :margin=>3, :margin_bottom=>6
+		para "#{HELP_PAGE_4}", :margin=>3
+		helpButton_previous = button "Previous", :height=>30, :width=>102 do
+			g_helpPage_3
+		end
+		helpButton_previous.move(73,HELP_HEIGHT-225)
+		helpButton_next = button "Next", :height=>30, :width=>102 do
+			g_helpPage_5
+		end
+		helpButton_next.move(HELP_WIDTH-175,HELP_HEIGHT-225)
+	end
+end
+
+def g_helpPage_5
+	@helpContent.clear
+	@helpContent.append do
+		para "Main chat interface", :font=>"18px", :margin=>3, :margin_bottom=>6
+		para "#{HELP_PAGE_5}", :margin=>3
+		helpButton_previous = button "Previous", :height=>30, :width=>102 do
+			g_helpPage_4
+		end
+		helpButton_previous.move(73,HELP_HEIGHT-225)
 	end
 end
